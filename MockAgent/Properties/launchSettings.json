@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "MockAgent": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DD_APM_RECEIVER_SOCKET": "%TEMP%\\apm.socket",
+        "DD_DOGSTATSD_SOCKET": "%TEMP%\\dsd.socket",
+        "DD_TRACE_AGENT_PORT": "11126",
+        "DD_DOGSTATSD_PORT": "11125"
+      }
+    }
+  }
+}

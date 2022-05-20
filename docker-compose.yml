@@ -1,0 +1,48 @@
+# Unless explicitly stated otherwise all files in this repository are licensed under the the Apache License Version 2.0.
+# This product includes software developed at Datadog (https://www.datadoghq.com/).
+# Copyright 2021 Datadog, Inc.
+
+version: "2.4"
+services:
+  
+  mockagent:
+    container_name: mockagent
+    image: transport_tests/mockagent
+    environment:
+      - DD_TRACE_AGENT_PORT
+      - DD_DOGSTATSD_PORT
+      - DD_APM_RECEIVER_SOCKET
+      - DD_DOGSTATSD_SOCKET
+    volumes:
+      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./shared/${TRANSPORT}/logs-mockagent/:/var/log/datadog
+      - ./shared/${TRANSPORT}/traces/:/var/log/traces
+      - ./shared/${TRANSPORT}/stats/:/var/log/stats
+    ports:
+      - "7126:7126/tcp"
+         
+  orchestrator:
+    container_name: orchestrator
+    image: transport_tests/orchestrator
+    environment:
+      - TRANSPORT_STRESS_TIMEOUT_MS
+    volumes:
+      - ./shared/${TRANSPORT}/logs/:/var/log/datadog
+    depends_on:
+      - mockagent
+        
+  spammer:
+    container_name: spammer
+    image: transport_tests/spammer
+    environment:
+      - DD_AGENT_HOST
+      - DD_TRACE_AGENT_PORT
+      - DD_DOGSTATSD_PORT
+      - DD_APM_RECEIVER_SOCKET
+      - DD_DOGSTATSD_SOCKET
+    volumes:
+      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./shared/${TRANSPORT}/logs-tracer/:/var/log/datadog
+    depends_on:
+      - orchestrator
+  
