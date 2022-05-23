@@ -9,21 +9,24 @@ services:
     container_name: mockagent
     image: transport_tests/mockagent
     environment:
-      - DD_AGENT_HOST
       - DD_TRACE_AGENT_PORT
+      - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
+      - DD_DOGSTATSD_SOCKET
     volumes:
-      - ./shared/${TRANSPORT}/run/:/var/run/datadog
-      - ./shared/${TRANSPORT}/logs/:/var/logs/datadog
+      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./shared/${TRANSPORT}/logs-mockagent/:/var/log/datadog
+      - ./shared/${TRANSPORT}/traces/:/var/log/traces
+      - ./shared/${TRANSPORT}/stats/:/var/log/stats
     ports:
-      - "7126:7126"
-      - "7125:7125"
+      - "127.0.0.1:7126:7126/tcp"
+      - "127.0.0.1:7125:7125/udp"
          
   orchestrator:
     container_name: orchestrator
     image: transport_tests/orchestrator
     volumes:
-      - ./shared/${TRANSPORT}/logs/:/var/logs/datadog
+      - ./shared/${TRANSPORT}/logs/:/var/log/datadog
     depends_on:
       - mockagent
         
@@ -33,10 +36,12 @@ services:
     environment:
       - DD_AGENT_HOST
       - DD_TRACE_AGENT_PORT
+      - DD_DOGSTATSD_PORT
+      - DD_APM_RECEIVER_SOCKET
+      - DD_DOGSTATSD_SOCKET
     volumes:
-      - ./shared/${TRANSPORT}/run/:/var/run/datadog
-      - ./shared/${TRANSPORT}/logs/:/var/logs/datadog
+      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./shared/${TRANSPORT}/logs-tracer/:/var/log/datadog
     depends_on:
-      - mockagent
       - orchestrator
   

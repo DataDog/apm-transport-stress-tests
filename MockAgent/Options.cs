@@ -1,46 +1,34 @@
-﻿using CommandLine;
-using CommandLine.Text;
-
-namespace MockAgent
+﻿namespace MockAgent
 {
     public class Options
     {
-        public static string TempPath = Path.GetTempPath();
+        internal const string DefaultTracesUnixDomainSocket = "/var/run/datadog/apm.socket";
+        internal const string DefaultMetricsUnixDomainSocket = "/var/run/datadog/dsd.socket";
 
-        public static readonly string DefaultUdsTrace = Path.Combine(TempPath, "apm.socket");
-        public static readonly string DefaultUdsStats = Path.Combine(TempPath, "dsd.socket");
+        public static readonly int DefaultPortTrace = 7126;
+        public static readonly int DefaultPortStats = 7126;
 
-        public static readonly string DefaultPipesTrace = "apm.mock.windows.pipe";
-        public static readonly string DefaultPipesStats = "dsd.mock.windows.pipe";
+        public bool UnixDomainSockets { get; set; } = true;
 
-        public static readonly int DefaultPortTrace = 11126;
-        public static readonly int DefaultPortStats = 11125;
+        public string TracesUnixDomainSocketPath { get; set; } = Environment.GetEnvironmentVariable("DD_APM_RECEIVER_SOCKET") ?? DefaultTracesUnixDomainSocket;
 
-        [Option('u', "uds", Required = false, HelpText = $"Receive traces and stats over unix domain sockets.")]
-        public bool UnixDomainSockets { get; set; }
+        public string MetricsUnixDomainSocketPath { get; set; } = Environment.GetEnvironmentVariable("DD_DOGSTATSD_SOCKET") ?? DefaultMetricsUnixDomainSocket;
 
-        [Option("trace-uds-path", Required = false, HelpText = "Set the unix domain socket for traces.")]
-        public string TracesUnixDomainSocketPath { get; set; } = DefaultUdsTrace;
+        public bool Tcp { get; set; } = true;
 
-        [Option("stats-uds-path", Required = false, HelpText = "Set the unix domain socket for metrics.")]
-        public string MetricsUnixDomainSocketPath { get; set; } = DefaultUdsStats;
+        public int TracesPort { get; set; } = EnvironmentNumber("DD_TRACE_AGENT_PORT") ?? DefaultPortTrace;
 
-        [Option('w', "wnp", Required = false, HelpText = "Receive traces and stats over windows named pipes.")]
-        public bool WindowsNamedPipe { get; set; }
+        public int MetricsPort { get; set; } = EnvironmentNumber("DD_DOGSTATSD_PORT") ?? DefaultPortStats;
 
-        [Option("trace-pipe-name", Required = false, HelpText = "Set the windows named pipe for traces.")]
-        public string TracesPipeName { get; set; } = DefaultPipesTrace;
+        private static int? EnvironmentNumber(string key)
+        {
+            var number = Environment.GetEnvironmentVariable(key);
 
-        [Option("stats-pipe-name", Required = false, HelpText = "Set the windows named pipe for metrics.")]
-        public string MetricsPipeName { get; set; } = DefaultPipesStats;
+            if (number == null) {
+                return null;
+            }
 
-        [Option('t', "tcp", Required = false, HelpText = "Receive traces and stats over TCP")]
-        public bool Tcp { get; set; }
-
-        [Option("trace-port", Required = false, HelpText = "Set the TCP port for traces.")]
-        public int TracesPort { get; set; } = DefaultPortTrace;
-
-        [Option("stats-port", Required = false, HelpText = "Set the UDP port for metrics.")]
-        public int MetricsPort { get; set; } = DefaultPortStats;
+            return int.Parse(number);
+        }
     }
 }

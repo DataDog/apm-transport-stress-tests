@@ -11,4 +11,15 @@ FROM mcr.microsoft.com/dotnet/runtime:6.0
 WORKDIR /app
 COPY --from=build /app/out .
 
+RUN mkdir /var/run/datadog; \
+    chmod -R a+rwX /var/run/datadog
+
+RUN touch this_volume_is_shared.txt
+	
+RUN mkdir -p /var/log/traces
+RUN chmod a+rwx /var/log/traces
+
+RUN mkdir -p /var/log/stats
+RUN chmod a+rwx /var/log/stats
+
 CMD ["dotnet", "MockAgent.dll"]

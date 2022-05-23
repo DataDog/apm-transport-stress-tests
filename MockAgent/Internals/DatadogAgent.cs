@@ -12,10 +12,6 @@ namespace MockAgent
 {
     public class DatadogAgent : IDisposable
     {
-        public long TracesReceived { get; set; }
-        public long SpansReceived { get; set; }
-        public long BytesReceived { get; set; }
-
         private readonly HttpListener _listener;
         private readonly UdpClient _udpClient;
         private readonly Task _tracesListenerTask;
@@ -333,13 +329,6 @@ namespace MockAgent
 
         protected virtual void OnRequestDeserialized(IList<IList<MockSpan>> traces)
         {
-            TracesReceived += traces.Count;
-
-            foreach (var spans in traces)
-            {
-                SpansReceived += spans.Count;
-            }
-
             RequestDeserialized?.Invoke(this, new EventArgs<IList<IList<MockSpan>>>(traces));
         }
 

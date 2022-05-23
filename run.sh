@@ -6,19 +6,32 @@
 
 set -eu
 
-# set .env if exists. Allow users to keep their conf via env vars
-if test -f ".env"; then
-    source .env
+# uds|tcpip
+export TRANSPORT=${1:-uds}
+
+OUTPUT_FOLDER=./shared/$TRANSPORT
+LOGS_FOLDER=${OUTPUT_FOLDER}/logs-container/
+
+if [[ "$TRANSPORT" == "uds" ]]; then
+    export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+    export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
+    # export DD_APM_RECEIVER_SOCKET=C:\Github\uds-stress-test-poc\shared\uds\uds-volume\apm.socket
+    # export DD_DOGSTATSD_SOCKET=C:\Github\uds-stress-test-poc\shared\uds\uds-volume\dsd.socket
+	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} and DSD on ${DD_DOGSTATSD_SOCKET}
+elif [[ "$TRANSPORT" == "tcpip" ]]; then
+    export DD_TRACE_AGENT_PORT=7126
+    export DD_DOGSTATSD_PORT=7125
+	export DD_AGENT_HOST=127.0.0.1
+	echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT}
 fi
-
-LOGS_FOLDER=./shared/$TRANSPORT/logs/
-
+	
 # Clean logs/ folder
-rm -rf $LOGS_FOLDER
+rm -rf $OUTPUT_FOLDER
+mkdir -p $OUTPUT_FOLDER
 mkdir -p $LOGS_FOLDER
 
 echo ============ Run $TRANSPORT tests ===================
-echo "ℹ️  Log folder is ./${LOGS_FOLDER}"
+echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 
 docker inspect transport_tests/spammer > $LOGS_FOLDER/spammer_image.json
 docker inspect transport_tests/orchestrator > $LOGS_FOLDER/orchestrator_image.json
@@ -46,6 +59,9 @@ echo "Outputting runner logs."
 
 # Show output. Trick: The process will end when orchestrator ends
 docker-compose logs -f orchestrator
+
+# Not sure why docker compose down doesn't kill the spammer, so manually kill for now
+docker kill spammer
 
 # Getting orchestrator exit code.
 EXIT_CODE=$(docker-compose ps -q orchestrator | xargs docker inspect -f '{{ .State.ExitCode }}')

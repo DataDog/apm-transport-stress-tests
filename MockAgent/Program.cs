@@ -1,116 +1,84 @@
-﻿// See https://aka.ms/new-console-template for more information
-using CommandLine;
-using MockAgent;
+﻿using MockAgent;
+using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
-var showTraces = true;
-var showMetrics = true;
+var tracesRecieved = new ConcurrentQueue<string>();
+var statsReceived = new ConcurrentQueue<string>();
 
 EventHandler<EventArgs<IList<IList<MockSpan>>>> displayTraces = (sender, args) =>
 {
-    if (!showTraces)
-    {
-        return;
-    }
-
     var traces = args.Value;
+    Console.WriteLine($"Traces received [{traces.Count}]");
     foreach (var trace in traces)
     {
-        foreach (var span in trace)
-        {
-            Console.WriteLine(span);
-        }
+        string json = JsonConvert.SerializeObject(traces, Formatting.Indented);
+        tracesRecieved.Enqueue(json);
+        File.WriteAllText($"/var/log/traces/traces_${DateTime.Now.Ticks}.json", json);
     }
 };
 
 EventHandler<EventArgs<string>> displayStats = (sender, args) =>
 {
-    if (!showMetrics)
-    {
-        return;
-    }
-
-    Console.WriteLine($"Stats: {args.Value}");
+    Console.WriteLine(args.Value);
+    statsReceived.Enqueue(args.Value);
+    File.WriteAllText($"/var/log/stats/stats_${DateTime.Now.Ticks}.txt", args.Value);
 };
 
-Parser.Default.ParseArguments<Options>(args)
-       .WithParsed<Options>(o =>
-       {
-           var agents = new List<DatadogAgent>();
+var o = new Options();
 
-           try
-           {
-               if (o.Tcp || args.Length == 0)
-               {
-                   var agent = new DatadogAgent(port: o.TracesPort, useStatsd: true, requestedStatsDPort: o.MetricsPort);
-                   Console.WriteLine($"Listening for traces on TCP: {agent.Port}");
-                   Console.WriteLine($"Listening for metrics on UDP port: {agent.StatsdPort}");
-                   agent.RequestDeserialized += displayTraces;
-                   agent.MetricsReceived += displayStats;
-                   agents.Add(agent);
-               }
+var agents = new List<DatadogAgent>();
 
-               if (o.UnixDomainSockets || args.Length == 0)
-               {
-                   var agent = new DatadogAgent(new UnixDomainSocketConfig(o.TracesUnixDomainSocketPath, o.MetricsUnixDomainSocketPath));
-                   Console.WriteLine($"Listening for traces on Unix Domain Socket: {agent.TracesUdsPath}");
-                   Console.WriteLine($"Listening for metrics on Unix Domain Socket: {agent.StatsUdsPath}");
-                   agent.RequestDeserialized += displayTraces;
-                   agent.MetricsReceived += displayStats;
-                   agents.Add(agent);
-               }
+try
+{
+    if (o.Tcp || args.Length == 0)
+    {
+        var agent = new DatadogAgent(port: o.TracesPort, useStatsd: true, requestedStatsDPort: o.MetricsPort);
+        Console.WriteLine($"Listening for traces on TCP: {agent.Port}");
+        Console.WriteLine($"Listening for metrics on UDP port: {agent.StatsdPort}");
+        agent.RequestDeserialized += displayTraces;
+        agent.MetricsReceived += displayStats;
+        agents.Add(agent);
+    }
 
-               if (o.WindowsNamedPipe) // || args.Length == 0)
-               {
-                   var agent = new DatadogAgent(new WindowsPipesConfig(o.TracesPipeName, o.MetricsPipeName));
-                   Console.WriteLine($"Listening for traces on Windows Named Pipe: {agent.TracesWindowsPipeName}");
-                   Console.WriteLine($"Listening for metrics on Windows Named Pipe: {agent.StatsWindowsPipeName}");
-                   agent.RequestDeserialized += displayTraces;
-                   agent.MetricsReceived += displayStats;
-                   agents.Add(agent);
-               }
+    if (o.UnixDomainSockets || args.Length == 0)
+    {
+        var agent = new DatadogAgent(new UnixDomainSocketConfig(o.TracesUnixDomainSocketPath, o.MetricsUnixDomainSocketPath));
+        Console.WriteLine($"Listening for traces on Unix Domain Socket: {agent.TracesUdsPath}");
+        Console.WriteLine($"Listening for metrics on Unix Domain Socket: {agent.StatsUdsPath}");
+        agent.RequestDeserialized += displayTraces;
+        agent.MetricsReceived += displayStats;
+        agents.Add(agent);
+    }
 
-               var shutdown = false;
+    Console.WriteLine("Agent instances are bound.");
 
-               while (!shutdown)
-               {
-                   Console.WriteLine("Options - Q to exit, T to toggle show traces, M to toggle show metrics. ");
-                   var input = Console.ReadKey();
-                   var entry = input.KeyChar.ToString().ToLowerInvariant();
-                   shutdown = entry.Contains("q");
+    File.WriteAllText($"/var/log/traces/able_to_write.txt", "");
+    File.WriteAllText($"/var/log/stats/able_to_write.txt", "");
 
-                   if (entry.Contains("t"))
-                   {
-                       showTraces = !showTraces;
-                       if (showTraces)
-                       {
-                           Console.WriteLine("Showing traces.");
-                       }
-                       else
-                       {
-                           Console.WriteLine("Hiding traces.");
-                       }
-                   }
+    Console.WriteLine("Finished output directory writes.");
 
-                   if (entry.Contains("m"))
-                   {
-                       showMetrics = !showMetrics;
-                       if (showMetrics)
-                       {
-                           Console.WriteLine("Showing metrics.");
-                       }
-                       else
-                       {
-                           Console.WriteLine("Hiding metrics.");
-                       }
-                   }
-               }
-           }
-           finally
-           {
-               foreach (var agent in agents)
-               {
-                   agent?.Dispose();
-               }
-           }
+    while (true)
+    {
+        Console.WriteLine($"Waiting... [{DateTime.Now.Ticks}]");
+        await Task.Delay(1000);
 
-       });
+        while (tracesRecieved.TryDequeue(out var trace))
+            Console.WriteLine(trace);
+
+        while (statsReceived.TryDequeue(out var stat))
+            Console.WriteLine(stat);
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex);
+}
+finally
+{
+    Console.WriteLine($"Exiting at {DateTime.Now.Ticks}");
+
+    foreach (var agent in agents)
+    {
+        agent?.Dispose();
+    }
+}
