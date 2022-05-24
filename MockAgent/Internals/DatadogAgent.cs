@@ -166,6 +166,10 @@ namespace MockAgent
 
         public event EventHandler<EventArgs<string>> MetricsReceived;
 
+        public int TraceRequestCount { get; set; }
+
+        public int MetricsRequestCount { get; set; }
+
         public string ListenerInfo { get; }
 
         /// <summary>
@@ -364,6 +368,7 @@ namespace MockAgent
                 try
                 {
                     var buffer = _udpClient.Receive(ref endPoint);
+                    MetricsRequestCount++;
                     var stats = Encoding.UTF8.GetString(buffer);
                     OnMetricsReceived(stats);
                     StatsdRequests.Enqueue(stats);
@@ -483,6 +488,7 @@ namespace MockAgent
                     var bytesReceived = new byte[0x1000];
                     // Connectionless protocol doesn't need Accept, Receive will block until we get something
                     var byteCount = _udsStatsSocket.Receive(bytesReceived);
+                    MetricsRequestCount++;
                     ArtificiallyThrottle();
                     var stats = Encoding.UTF8.GetString(bytesReceived, 0, byteCount);
                     OnMetricsReceived(stats);
@@ -506,6 +512,8 @@ namespace MockAgent
                 try
                 {
                     using var handler = await _udsTracesSocket.AcceptAsync();
+                    TraceRequestCount++;
+
                     using var stream = new NetworkStream(handler);
 
                     var request = await MockHttpParser.ReadRequest(stream);

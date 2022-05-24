@@ -26,28 +26,27 @@ EventHandler<EventArgs<string>> displayStats = (sender, args) =>
 
 var o = new Options();
 
-var agents = new List<DatadogAgent>();
+DatadogAgent? tcpipAgent = null;
+DatadogAgent? udsAgent = null;
 
 try
 {
     if (o.Tcp || args.Length == 0)
     {
-        var agent = new DatadogAgent(port: o.TracesPort, useStatsd: true, requestedStatsDPort: o.MetricsPort);
-        Console.WriteLine($"Listening for traces on TCP: {agent.Port}");
-        Console.WriteLine($"Listening for metrics on UDP port: {agent.StatsdPort}");
-        agent.RequestDeserialized += displayTraces;
-        agent.MetricsReceived += displayStats;
-        agents.Add(agent);
+        tcpipAgent = new DatadogAgent(port: o.TracesPort, useStatsd: true, requestedStatsDPort: o.MetricsPort);
+        Console.WriteLine($"Listening for traces on TCP: {tcpipAgent.Port}");
+        Console.WriteLine($"Listening for metrics on UDP port: {tcpipAgent.StatsdPort}");
+        tcpipAgent.RequestDeserialized += displayTraces;
+        tcpipAgent.MetricsReceived += displayStats;
     }
 
     if (o.UnixDomainSockets || args.Length == 0)
     {
-        var agent = new DatadogAgent(new UnixDomainSocketConfig(o.TracesUnixDomainSocketPath, o.MetricsUnixDomainSocketPath));
-        Console.WriteLine($"Listening for traces on Unix Domain Socket: {agent.TracesUdsPath}");
-        Console.WriteLine($"Listening for metrics on Unix Domain Socket: {agent.StatsUdsPath}");
-        agent.RequestDeserialized += displayTraces;
-        agent.MetricsReceived += displayStats;
-        agents.Add(agent);
+        udsAgent = new DatadogAgent(new UnixDomainSocketConfig(o.TracesUnixDomainSocketPath, o.MetricsUnixDomainSocketPath));
+        Console.WriteLine($"Listening for traces on Unix Domain Socket: {udsAgent.TracesUdsPath}");
+        Console.WriteLine($"Listening for metrics on Unix Domain Socket: {udsAgent.StatsUdsPath}");
+        udsAgent.RequestDeserialized += displayTraces;
+        udsAgent.MetricsReceived += displayStats;
     }
 
     Console.WriteLine("Agent instances are bound.");
@@ -75,10 +74,8 @@ catch (Exception ex)
 }
 finally
 {
+    Console.WriteLine($"Disposing agents at {DateTime.Now.Ticks}");
+    tcpipAgent?.Dispose();
+    udsAgent?.Dispose();
     Console.WriteLine($"Exiting at {DateTime.Now.Ticks}");
-
-    foreach (var agent in agents)
-    {
-        agent?.Dispose();
-    }
 }

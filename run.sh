@@ -9,6 +9,9 @@ set -eu
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 
+# default 20k ms
+export TIMEOUT=${2:-20000}
+
 OUTPUT_FOLDER=./shared/$TRANSPORT
 LOGS_FOLDER=${OUTPUT_FOLDER}/logs-container/
 
@@ -21,7 +24,8 @@ if [[ "$TRANSPORT" == "uds" ]]; then
 elif [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=7126
     export DD_DOGSTATSD_PORT=7125
-	export DD_AGENT_HOST=127.0.0.1
+	# export DD_AGENT_HOST=127.0.0.1
+	export DD_AGENT_HOST=mockagent
 	echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT}
 fi
 	
@@ -60,8 +64,10 @@ echo "Outputting runner logs."
 # Show output. Trick: The process will end when orchestrator ends
 docker-compose logs -f orchestrator
 
+echo Forcing stop on all containers
 # Not sure why docker compose down doesn't kill the spammer, so manually kill for now
-docker kill spammer
+docker stop spammer
+docker stop mockagent
 
 # Getting orchestrator exit code.
 EXIT_CODE=$(docker-compose ps -q orchestrator | xargs docker inspect -f '{{ .State.ExitCode }}')

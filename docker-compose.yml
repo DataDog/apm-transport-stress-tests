@@ -19,12 +19,13 @@ services:
       - ./shared/${TRANSPORT}/traces/:/var/log/traces
       - ./shared/${TRANSPORT}/stats/:/var/log/stats
     ports:
-      - "127.0.0.1:7126:7126/tcp"
-      - "127.0.0.1:7125:7125/udp"
+      - "7126:7126/tcp"
          
   orchestrator:
     container_name: orchestrator
     image: transport_tests/orchestrator
+    environment:
+      - TRANSPORT_STRESS_TIMEOUT_MS
     volumes:
       - ./shared/${TRANSPORT}/logs/:/var/log/datadog
     depends_on:
