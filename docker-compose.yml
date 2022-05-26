@@ -14,12 +14,12 @@ services:
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
     volumes:
-      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
-      - ./shared/${TRANSPORT}/logs-mockagent/:/var/log/datadog
-      - ./shared/${TRANSPORT}/traces/:/var/log/traces
-      - ./shared/${TRANSPORT}/stats/:/var/log/stats
+      - ./results/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./results/${TRANSPORT}/mockagent/snapshots:/snapshots
+      - ./results/${TRANSPORT}/traces/:/var/log/traces
+      - ./results/${TRANSPORT}/stats/:/var/log/stats
     ports:
-      - "7126:7126/tcp"
+      - "9126:9126/tcp"
          
   orchestrator:
     container_name: orchestrator
@@ -27,7 +27,7 @@ services:
     environment:
       - TRANSPORT_STRESS_TIMEOUT_MS
     volumes:
-      - ./shared/${TRANSPORT}/logs/:/var/log/datadog
+      - ./results/${TRANSPORT}/logs/:/var/log/datadog
     depends_on:
       - mockagent
         
@@ -41,8 +41,8 @@ services:
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
     volumes:
-      - ./shared/${TRANSPORT}/uds-volume/:/var/run/datadog
-      - ./shared/${TRANSPORT}/logs-tracer/:/var/log/datadog
+      - ./results/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
     depends_on:
       - orchestrator
   

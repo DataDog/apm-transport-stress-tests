@@ -11,7 +11,7 @@ LANGUAGE=${1:-dotnet}
 
 echo =============== Building Mock Agent ===============
 
-docker build --progress=plain -f ./MockAgent/Dockerfile -t transport_tests/mockagent ./MockAgent
+docker build --progress=plain -f ./mockagent.Dockerfile -t transport_tests/mockagent .
 
 echo =============== Building Orchestrator ===============
 
