@@ -617,7 +617,7 @@ namespace MockAgent
 
         private void ArtificiallyThrottle()
         {
-            Thread.Sleep(500);
+            Thread.Sleep(1);
         }
     }
 }

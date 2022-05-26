@@ -1,5 +1,5 @@
 {
-  "name": "node",
+  "name": "nodejs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dd-trace": "^2.7.1"
+    "dd-trace": "^2.8.0"
   }
 }
