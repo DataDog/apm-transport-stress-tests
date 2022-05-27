@@ -17,10 +17,9 @@ ENV SNAPSHOT_CI=1
 ENV LOG_LEVEL=INFO
 ENV SNAPSHOT_DIR=/snapshots
 
-RUN mkdir -p /src
 WORKDIR /src
-COPY ./dd-apm-test-agent /src
-RUN pip install /src
+COPY . ./
+RUN ls
+RUN ./install-test-agent.sh
 
-# RUN pip install git+https://github.com/Datadog/dd-apm-test-agent
 CMD ["ddapm-test-agent"]
