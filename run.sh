@@ -12,8 +12,9 @@ export TRANSPORT=${1:-uds}
 # default 20k ms
 export TIMEOUT=${2:-20000}
 
-OUTPUT_FOLDER=./shared/$TRANSPORT
-LOGS_FOLDER=${OUTPUT_FOLDER}/logs-container
+mkdir -p ./results
+OUTPUT_FOLDER=./results/$TRANSPORT
+LOGS_FOLDER=${OUTPUT_FOLDER}/logs
 
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=9126
