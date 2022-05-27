@@ -1,0 +1,19 @@
+name: Run Stress Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: ./build.sh dotnet
+    - name: Run TCPIP
+      run: ./run.sh tcpip
+    - name: Run UDS
+      run: ./run.sh uds
