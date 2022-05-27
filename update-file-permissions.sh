@@ -2,3 +2,4 @@
 
 git update-index --chmod=+x ./run.sh
 git update-index --chmod=+x ./build.sh
+git update-index --chmod=+x ./install-test-agent.sh
