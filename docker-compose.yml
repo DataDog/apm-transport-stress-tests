@@ -6,8 +6,8 @@ version: "2.4"
 services:
   
   mockagent:
-    container_name: mockagent
-    image: transport_tests/mockagent
+    container_name: transport-mockagent
+    image: transport-mockagent
     environment:
       - DD_TRACE_AGENT_PORT
       - DD_DOGSTATSD_PORT
@@ -22,8 +22,8 @@ services:
       - "9126:9126/tcp"
          
   orchestrator:
-    container_name: orchestrator
-    image: transport_tests/orchestrator
+    container_name: transport-orchestrator
+    image: transport-orchestrator
     environment:
       - TRANSPORT_STRESS_TIMEOUT_MS
     volumes:
@@ -32,8 +32,8 @@ services:
       - mockagent
         
   spammer:
-    container_name: spammer
-    image: transport_tests/spammer
+    container_name: transport-spammer
+    image: transport-spammer
     environment:
       - DD_AGENT_HOST
       - DD_TRACE_AGENT_PORT

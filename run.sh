@@ -55,15 +55,12 @@ mkdir -p $LOGS_FOLDER
 echo ============ Run $TRANSPORT tests ===================
 echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 
-docker inspect transport_tests/spammer > $OUTPUT_FOLDER/image_spammer.json
-docker inspect transport_tests/orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
-docker inspect transport_tests/mockagent > $OUTPUT_FOLDER/image_mockagent.json
+docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
+docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
+docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 echo "Starting containers in background."
 docker-compose up -d --force-recreate
-
-# Show output. Trick: The process will end when orchestrator ends
-docker-compose logs -f orchestrator
 
 export container_log_folder="unset"
 containers=("mockagent" "orchestrator" "spammer")
@@ -77,8 +74,11 @@ do
     docker-compose logs --no-color --no-log-prefix -f $container > $container_log_folder/stdout.log &
 done
 
+# Show output. Trick: The process will end when orchestrator ends
+docker-compose logs -f orchestrator
+
 echo Forcing stop on all containers
-# Not sure why docker compose down doesn't kill the spammer, so manually kill for now
+# Not sure why docker compose down doesn't stop the spammer, so manually stop for now
 docker stop spammer
 docker stop mockagent
 docker stop orchestrator
