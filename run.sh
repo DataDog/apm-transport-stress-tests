@@ -77,18 +77,11 @@ done
 # Show output. Trick: The process will end when orchestrator ends
 docker-compose logs -f orchestrator
 
+# Stop all containers
+docker-compose down --remove-orphans
+
 echo Forcing stop on all containers
 # Not sure why docker compose down doesn't stop the spammer, so manually stop for now
 docker stop spammer
 docker stop mockagent
 docker stop orchestrator
-
-# Getting orchestrator exit code.
-EXIT_CODE=$(docker-compose ps -q orchestrator | xargs docker inspect -f '{{ .State.ExitCode }}')
-
-# Stop all containers
-docker-compose down --remove-orphans
-
-# Exit with orchestrator's status
-echo "Exiting with ${EXIT_CODE}"
-exit $EXIT_CODE
