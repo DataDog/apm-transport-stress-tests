@@ -74,14 +74,16 @@ do
     docker-compose logs --no-color --no-log-prefix -f $container > $container_log_folder/stdout.log &
 done
 
+echo Waiting for orchestrator to finish
 # Show output. Trick: The process will end when orchestrator ends
 docker-compose logs -f orchestrator
 
+echo Stopping all containers
 # Stop all containers
 docker-compose down --remove-orphans
 
-echo Forcing stop on all containers
-# Not sure why docker compose down doesn't stop the spammer, so manually stop for now
-docker stop spammer
-docker stop mockagent
-docker stop orchestrator
+# echo Forcing stop on all containers
+# # Not sure why docker compose down doesn't stop the spammer, so manually stop for now
+# docker stop spammer
+# docker stop mockagent
+# docker stop orchestrator
