@@ -17,8 +17,12 @@ jobs:
       run: ./run.sh tcpip
     - name: Run UDS
       run: ./run.sh uds
-    - name: Archive results
-      uses: actions/upload-artifact@v3
+    - name: Compress results
+      if: ${{ always() }}
+      run: tar -czvf results.tar.gz $(ls | grep results)
+    - name: Upload results
+      uses: actions/upload-results@v2
+      if: ${{ always() }}
       with:
-        name: results
-        path: results
+        name: results_dotnet
+        path: results_dotnet.tar.gz
