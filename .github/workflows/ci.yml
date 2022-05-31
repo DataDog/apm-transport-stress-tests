@@ -7,22 +7,26 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-dotnet:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
+      
     - name: Build
       run: ./build.sh dotnet
+      
     - name: Run TCPIP
       run: ./run.sh tcpip
+      
     - name: Run UDS
       run: ./run.sh uds
+      
     - name: Compress results
-      if: ${{ always() }}
       run: tar -czvf results.tar.gz $(ls | grep results)
+      
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      if: ${{ always() }}
+      uses: actions/upload-artifact@v3
       with:
         name: results_dotnet
         path: results_dotnet.tar.gz
