@@ -11,12 +11,11 @@ LANGUAGE=${1:-dotnet}
 
 echo =============== Building Mock Agent ===============
 
-docker build --progress=plain -f ./mockagent.Dockerfile -t transport_tests/mockagent .
-exit 0
+docker build --progress=plain -f ./mockagent.Dockerfile -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 
-docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport_tests/orchestrator ./Orchestrator
+docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport-orchestrator ./Orchestrator
 	
 echo =============== Building Spammer ===============
 
@@ -25,5 +24,5 @@ DOCKERFILE=./${LANGUAGE}/Dockerfile
 docker build \
     --progress=plain \
     -f ${DOCKERFILE} \
-    -t transport_tests/spammer \
+    -t transport-spammer \
     ./${LANGUAGE}
