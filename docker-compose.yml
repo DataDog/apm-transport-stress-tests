@@ -40,6 +40,7 @@ services:
       - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
+      - DD_TRACE_DEBUG
     volumes:
       - ./results/${TRANSPORT}/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
