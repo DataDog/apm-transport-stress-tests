@@ -6,5 +6,5 @@ if [ -f "./dd-apm-test-agent/setup.py" ]; then
 else
     echo "Installing test agent from latest github commit."
     # pip install git+https://github.com/Datadog/dd-apm-test-agent
-	pip install git+https://github.com/Kyle-Verhoog/dd-apm-test-agent/tree/uds
+	pip install git+https://github.com/Kyle-Verhoog/dd-apm-test-agent@uds
 fi
