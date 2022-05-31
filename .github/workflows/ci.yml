@@ -1,71 +1,24 @@
-name: Transport stress testing
+name: Run Stress Tests
 
 on:
-  workflow_dispatch: {}
-  schedule:
-    - cron:  '00 02 * * 2-6'
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - "**"
+    branches: [ main ]
 
 jobs:
-  dotnet:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: ./build.sh dotnet
-
-      - name: Run TCPIP
-        run: ./run.sh tcpip
-        env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          
-      - name: Run UDS
-        run: ./run.sh uds
-        env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-
-      - name: Compress results
-        if: ${{ always() }}
-        run: tar -czvf dotnet-artifact.tar.gz $(ls | grep results)
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
-        with:
-          name: logs_${{ matrix.library }}_${{ matrix.weblog-variant }}_${{ matrix.version }}
-          path: dotnet-artifact.tar.gz
-          
-  node:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Build
-        run: ./build.sh nodejs
-
-      - name: Run TCPIP
-        run: ./run.sh tcpip
-        env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          
-      - name: Run UDS
-        run: ./run.sh uds
-        env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-
-      - name: Compress results
-        if: ${{ always() }}
-        run: tar -czvf nodejs-artifact.tar.gz $(ls | grep results)
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
-        with:
-          name: logs_${{ matrix.library }}_${{ matrix.weblog-variant }}_${{ matrix.version }}
-          path: nodejs-artifact.tar.gz
-
+    - uses: actions/checkout@v3
+    - name: Build
+      run: ./build.sh dotnet
+    - name: Run TCPIP
+      run: ./run.sh tcpip
+    - name: Run UDS
+      run: ./run.sh uds
+    - name: Archive results
+      uses: actions/upload-artifact@v3
+      with:
+        name: results
+        path: results
