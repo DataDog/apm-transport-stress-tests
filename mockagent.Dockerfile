@@ -19,7 +19,6 @@ ENV SNAPSHOT_DIR=/snapshots
 
 WORKDIR /src
 COPY . ./
-RUN ls
 RUN ./install-test-agent.sh
 
 CMD ["ddapm-test-agent"]

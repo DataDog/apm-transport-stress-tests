@@ -1,6 +1,6 @@
 # Install the test agent
 
-if [ -d "dd-apm-test-agent" ]; then
+if [ -f "./dd-apm-test-agent/setup.py" ]; then
     echo "Installing test agent from sub-repository."
     pip install ./dd-apm-test-agent
 else
