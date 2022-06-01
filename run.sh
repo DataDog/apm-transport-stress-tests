@@ -16,6 +16,8 @@ mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
 LOGS_FOLDER=${OUTPUT_FOLDER}/logs
 
+export DD_TRACE_DEBUG="True"
+
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=9126
     export DD_DOGSTATSD_PORT=9125
