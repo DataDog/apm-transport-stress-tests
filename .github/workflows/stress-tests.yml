@@ -18,9 +18,13 @@ jobs:
       
     - name: Run TCPIP
       run: ./run.sh tcpip
+      env:
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
       
     - name: Run UDS
       run: ./run.sh uds
+      env:
+        DD_API_KEY: ${{ secrets.DD_API_KEY }}
       
     - name: Compress results
       run: tar -czvf results_dotnet.tar.gz $(ls | grep results)
