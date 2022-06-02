@@ -7,11 +7,14 @@
 set -e
 
 # dotnet|nodejs|python|ruby|golang|java|php|cpp
-LANGUAGE=${1:-dotnet}
+LANGUAGE=${1}
 
-echo =============== Building Mock Agent ===============
+# mockagent|realagent
+AGENT_TYPE=${2:realagent}
 
-docker build --progress=plain -f ./mockagent.Dockerfile -t transport-mockagent .
+echo =============== Building Agent ===============
+
+docker build --progress=plain -f ./${AGENT_TYPE}.Dockerfile -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 

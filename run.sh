@@ -9,23 +9,23 @@ set -eu
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 
-# default 20k ms
-export TIMEOUT=${2:-20000}
+export TRANSPORT_STRESS_TIMEOUT_MS=${2:-20000}
+
+export DD_TRACE_DEBUG="0"
 
 mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
 LOGS_FOLDER=${OUTPUT_FOLDER}/logs
 
-export DD_TRACE_DEBUG="0"
+OS_UNAME=$(uname -s)
 
+echo OS: $OS_UNAME
+	
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=9126
+    export DD_APM_RECEIVER_PORT=9126
     export DD_DOGSTATSD_PORT=9125
 
-	OS_UNAME=$(uname -s)
-
-	echo OS: $OS_UNAME
-	
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
 		echo Operating on a windows host with host.docker.internal
@@ -37,15 +37,19 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 	echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT} against ${DD_AGENT_HOST}
 elif [[ "$TRANSPORT" == "uds" ]]; then
 
+	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
+		echo UDS is not supported on Windows yet
+		exit 1
+	fi
+	
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
-    # export DD_APM_RECEIVER_SOCKET=C:\Github\uds-stress-test-poc\shared\uds\uds-volume\apm.socket
-    # export DD_DOGSTATSD_SOCKET=C:\Github\uds-stress-test-poc\shared\uds\uds-volume\dsd.socket
 	
 	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} and DSD on ${DD_DOGSTATSD_SOCKET}
 	
 	unset DD_AGENT_HOST
 	unset DD_TRACE_AGENT_PORT
+	unset DD_APM_RECEIVER_PORT
 	unset DD_DOGSTATSD_PORT
 fi
 	
