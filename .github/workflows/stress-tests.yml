@@ -14,7 +14,7 @@ jobs:
       uses: actions/checkout@v3
       
     - name: Build
-      run: ./build.sh dotnet
+      run: ./build.sh dotnet realagent
       
     - name: Run TCPIP
       run: ./run.sh tcpip

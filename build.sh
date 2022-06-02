@@ -10,12 +10,12 @@ set -e
 LANGUAGE=${1}
 
 # mockagent|realagent
-AGENT_TYPE=${2:realagent}
+AGENT_TYPE=${2}
 
 echo =============== Building Agent ===============
 
 AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
-docker build --progress=plain -f $AGENT_DOCKERFILE -t transport-mockagent .
+docker build --progress=plain -f ${AGENT_DOCKERFILE} -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 
