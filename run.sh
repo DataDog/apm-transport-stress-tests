@@ -16,7 +16,7 @@ mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
 LOGS_FOLDER=${OUTPUT_FOLDER}/logs
 
-export DD_TRACE_DEBUG="True"
+export DD_TRACE_DEBUG="0"
 
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=9126
@@ -30,7 +30,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 		export DD_AGENT_HOST=host.docker.internal
 		echo Operating on a windows host with host.docker.internal
 	else
-		export DD_AGENT_HOST=localhost
+		export DD_AGENT_HOST=mockagent
 		echo Operating on a non-windows host with localhost
 	fi
 	
