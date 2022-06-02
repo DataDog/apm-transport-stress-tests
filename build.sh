@@ -14,7 +14,8 @@ AGENT_TYPE=${2:realagent}
 
 echo =============== Building Agent ===============
 
-docker build --progress=plain -f ./${AGENT_TYPE}.Dockerfile -t transport-mockagent .
+AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
+docker build --progress=plain -f AGENT_DOCKERFILE -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 
@@ -22,10 +23,10 @@ docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport-orchestr
 	
 echo =============== Building Spammer ===============
 
-DOCKERFILE=./${LANGUAGE}/Dockerfile
+SPAMMER_DOCKERFILE=./${LANGUAGE}/Dockerfile
 
 docker build \
     --progress=plain \
-    -f ${DOCKERFILE} \
+    -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
     ./${LANGUAGE}
