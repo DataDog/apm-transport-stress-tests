@@ -7,11 +7,15 @@
 set -e
 
 # dotnet|nodejs|python|ruby|golang|java|php|cpp
-LANGUAGE=${1:-dotnet}
+LANGUAGE=${1}
 
-echo =============== Building Mock Agent ===============
+# mockagent|realagent
+AGENT_TYPE=${2}
 
-docker build --progress=plain -f ./mockagent.Dockerfile -t transport-mockagent .
+echo =============== Building Agent ===============
+
+AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
+docker build --progress=plain -f ${AGENT_DOCKERFILE} -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 
@@ -19,10 +23,10 @@ docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport-orchestr
 	
 echo =============== Building Spammer ===============
 
-DOCKERFILE=./${LANGUAGE}/Dockerfile
+SPAMMER_DOCKERFILE=./${LANGUAGE}/Dockerfile
 
 docker build \
     --progress=plain \
-    -f ${DOCKERFILE} \
+    -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
     ./${LANGUAGE}

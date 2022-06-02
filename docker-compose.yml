@@ -9,17 +9,25 @@ services:
     container_name: transport-mockagent
     image: transport-mockagent
     environment:
+      - DD_APM_RECEIVER_PORT
       - DD_TRACE_AGENT_PORT
       - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
+      - DD_API_KEY
     volumes:
-      - ./results/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - ./results/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/mockagent/snapshots:/snapshots
-      - ./results/${TRANSPORT}/traces/:/var/log/traces
-      - ./results/${TRANSPORT}/stats/:/var/log/stats
     ports:
       - "9126:9126/tcp"
+      - "9125:9125/udp"
+    cpu_count: 1
+    cpus: 0.3
+    cpu_percent: 10
+    mem_limit: 50m
          
   orchestrator:
     container_name: transport-orchestrator
@@ -42,8 +50,12 @@ services:
       - DD_DOGSTATSD_SOCKET
       - DD_TRACE_DEBUG
     volumes:
-      - ./results/${TRANSPORT}/uds-volume/:/var/run/datadog
+      - ./results/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
     depends_on:
       - orchestrator
+    cpu_count: 1
+    cpus: 1
+    cpu_percent: 80
+    mem_limit: 100m
   
