@@ -15,7 +15,7 @@ AGENT_TYPE=${2:realagent}
 echo =============== Building Agent ===============
 
 AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
-docker build --progress=plain -f AGENT_DOCKERFILE -t transport-mockagent .
+docker build --progress=plain -f $AGENT_DOCKERFILE -t transport-mockagent .
 
 echo =============== Building Orchestrator ===============
 
