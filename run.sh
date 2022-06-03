@@ -84,18 +84,7 @@ do
 done
 
 echo Waiting for orchestrator to finish
-# Show output. Trick: The process will end when orchestrator ends
 docker-compose logs -f orchestrator
 
 echo Stopping all containers
-# Stop all containers
 docker-compose down --remove-orphans
-
-echo ========= Agent logs =========
-docker-compose logs -f mockagent
-
-# echo Forcing stop on all containers
-# # Not sure why docker compose down doesn't stop the spammer, so manually stop for now
-# docker stop spammer
-# docker stop mockagent
-# docker stop orchestrator
