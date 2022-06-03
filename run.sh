@@ -12,6 +12,8 @@ export TRANSPORT=${1:-uds}
 export TRANSPORT_STRESS_TIMEOUT_MS=${2:-20000}
 
 export DD_TRACE_DEBUG="0"
+export DD_ENV="transport-tests"
+export DD_VERSION="main"
 
 mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
@@ -25,6 +27,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=9126
     export DD_APM_RECEIVER_PORT=9126
     export DD_DOGSTATSD_PORT=9125
+	export DD_SERVICE="tcp"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
@@ -41,7 +44,8 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 		echo UDS is not supported on Windows yet
 		exit 1
 	fi
-	
+
+	export DD_SERVICE="uds"	
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
