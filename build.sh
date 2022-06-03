@@ -29,4 +29,4 @@ docker build \
     --progress=plain \
     -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
-    ./${LANGUAGE}
+    ./languages/${LANGUAGE}
