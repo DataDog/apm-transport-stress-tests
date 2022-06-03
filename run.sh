@@ -9,7 +9,7 @@ set -eu
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 
-export TRANSPORT_STRESS_TIMEOUT_MS=${2:-20000}
+export TRANSPORT_STRESS_TIMEOUT_MS=${2:-30000}
 
 export DD_TRACE_DEBUG="0"
 export DD_ENV="transport-tests"
@@ -78,10 +78,9 @@ containers=("mockagent" "orchestrator" "spammer")
 # Save docker logs
 for container in ${containers[@]}
 do
-    container_log_folder="${LOGS_FOLDER}/${container}"
-	mkdir -p ${LOGS_FOLDER}/${container}
-	echo Inspecting container logs ${container}, saving to ${container_log_folder}
-    docker-compose logs --no-color --no-log-prefix -f $container > $container_log_folder/stdout.log &
+    container_log="${LOGS_FOLDER}/${container}-stdout.log"
+	echo Inspecting container logs ${container}, saving to ${container_log}
+    docker-compose logs --no-color --no-log-prefix -f $container > $container_log &
 done
 
 echo Waiting for orchestrator to finish
@@ -91,6 +90,9 @@ docker-compose logs -f orchestrator
 echo Stopping all containers
 # Stop all containers
 docker-compose down --remove-orphans
+
+echo ========= Agent logs =========
+docker-compose logs mockagent
 
 # echo Forcing stop on all containers
 # # Not sure why docker compose down doesn't stop the spammer, so manually stop for now
