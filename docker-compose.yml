@@ -15,6 +15,7 @@ services:
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
       - DD_API_KEY
+      - DD_ENV
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -49,6 +50,9 @@ services:
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
       - DD_TRACE_DEBUG
+      - DD_ENV
+      - DD_SERVICE
+      - DD_VERSION
     volumes:
       - ./results/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
