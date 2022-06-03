@@ -23,10 +23,10 @@ docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport-orchestr
 	
 echo =============== Building Spammer ===============
 
-SPAMMER_DOCKERFILE=./${LANGUAGE}/Dockerfile
+SPAMMER_DOCKERFILE=./languages/${LANGUAGE}/Dockerfile
 
 docker build \
     --progress=plain \
     -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
-    ./${LANGUAGE}
+    ./languages/${LANGUAGE}
