@@ -26,11 +26,8 @@ jobs:
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
       
-    - name: Compress results
-      run: tar -czvf results_dotnet.tar.gz $(ls | grep results)
-      
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: results_dotnet
-        path: results_dotnet.tar.gz
+        path: results

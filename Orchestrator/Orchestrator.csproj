@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Docker.DotNet" Version="3.125.5" />
+    <PackageReference Include="DogStatsD-CSharp-Client" Version="7.0.0" />
+  </ItemGroup>
+
 </Project>

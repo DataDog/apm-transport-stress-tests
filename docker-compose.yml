@@ -29,16 +29,6 @@ services:
     cpus: 0.3
     cpu_percent: 10
     mem_limit: 50m
-         
-  orchestrator:
-    container_name: transport-orchestrator
-    image: transport-orchestrator
-    environment:
-      - TRANSPORT_STRESS_TIMEOUT_MS
-    volumes:
-      - ./results/${TRANSPORT}/logs/:/var/log/datadog
-    depends_on:
-      - mockagent
         
   spammer:
     container_name: transport-spammer
@@ -58,7 +48,7 @@ services:
       - ./results/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
     depends_on:
-      - orchestrator
+      - mockagent
     cpu_count: 1
     cpus: 1
     cpu_percent: 80
