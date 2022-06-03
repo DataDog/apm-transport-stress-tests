@@ -92,7 +92,7 @@ echo Stopping all containers
 docker-compose down --remove-orphans
 
 echo ========= Agent logs =========
-docker-compose logs mockagent
+docker-compose logs -f mockagent
 
 # echo Forcing stop on all containers
 # # Not sure why docker compose down doesn't stop the spammer, so manually stop for now
