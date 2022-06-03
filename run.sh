@@ -33,7 +33,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 		export DD_AGENT_HOST=host.docker.internal
 		echo Operating on a windows host with host.docker.internal
 	else
-		export DD_AGENT_HOST=mockagent
+		export DD_AGENT_HOST=127.0.0.1
 		echo Operating on a non-windows host with localhost
 	fi
 	
