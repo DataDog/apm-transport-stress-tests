@@ -92,7 +92,7 @@ echo "Starting observer"
 ./observe.sh start
 
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
-sleep $TRANSPORT_STRESS_TIMEOUT_MS
+sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
 echo "Stopping observer"
 ./observe.sh stop
