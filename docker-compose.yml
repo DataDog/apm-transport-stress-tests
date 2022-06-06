@@ -20,7 +20,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
-      - ./results/uds-volume/:/var/run/datadog
+      - ./temp-uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/mockagent/snapshots:/snapshots
     ports:
       - "9126:9126/tcp"
@@ -45,7 +45,7 @@ services:
       - DD_SERVICE
       - DD_VERSION
     volumes:
-      - ./results/uds-volume/:/var/run/datadog
+      - ./temp-uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
     depends_on:
       - mockagent
