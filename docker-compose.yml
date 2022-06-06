@@ -8,11 +8,6 @@ services:
   mockagent:
     container_name: transport-mockagent
     image: transport-mockagent
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://$$DD_AGENT_HOST:9126/info"]
-      interval: 1s
-      start_period: 5s
-      retries: 60
     environment:
       - DD_APM_RECEIVER_PORT
       - DD_TRACE_AGENT_PORT
@@ -34,16 +29,6 @@ services:
     cpus: 0.3
     cpu_percent: 10
     mem_limit: 50m
-         
-  orchestrator:
-    container_name: transport-orchestrator
-    image: transport-orchestrator
-    environment:
-      - TRANSPORT_STRESS_TIMEOUT_MS
-    volumes:
-      - ./results/${TRANSPORT}/logs/:/var/log/datadog
-    depends_on:
-      - mockagent
         
   spammer:
     container_name: transport-spammer
@@ -63,7 +48,7 @@ services:
       - ./results/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
     depends_on:
-      - orchestrator
+      - mockagent
     cpu_count: 1
     cpus: 1
     cpu_percent: 80

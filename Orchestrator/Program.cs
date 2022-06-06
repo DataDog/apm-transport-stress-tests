@@ -8,7 +8,11 @@ Console.WriteLine($"Beginning orchestrator at {start}");
 
 var cancellationToken = new CancellationTokenSource();
 
-DockerClient client = new DockerClientConfiguration().CreateClient();
+//DockerClient client = new DockerClientConfiguration().CreateClient();
+DockerClient client = new DockerClientConfiguration(new Uri(@"unix:///var/run/docker.sock"),
+                                                                null,
+                                                                new TimeSpan(0, 0, 1000))
+                                                                .CreateClient();
 
 var containers = await client.Containers.ListContainersAsync(new ContainersListParameters { All = true });
 

@@ -69,11 +69,11 @@ docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
-echo "Starting containers in background."
+echo "Starting containers in background"
 docker-compose up -d --force-recreate
 
 export container_log_folder="unset"
-containers=("mockagent" "orchestrator" "spammer")
+containers=("mockagent" "spammer")
 
 # Save docker logs
 for container in ${containers[@]}
@@ -83,8 +83,14 @@ do
     docker-compose logs --no-color --no-log-prefix -f $container > $container_log &
 done
 
-echo Waiting for orchestrator to finish
-docker-compose logs -f orchestrator
+echo "Starting observer"
+./observe.sh start
 
-echo Stopping all containers
+echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
+sleep $TRANSPORT_STRESS_TIMEOUT_MS
+
+echo "Stopping observer"
+./observe.sh stop
+
+echo "Stopping all containers"
 docker-compose down --remove-orphans
