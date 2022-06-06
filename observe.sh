@@ -22,6 +22,7 @@ in
     myscript)
 
         SPAMMER_STATS_FILE=./results/${TRANSPORT}/spammer-stats.json
+        REQUEST_FORMAT="GET /containers/${SPAMMER_CONTAINER_ID}/stats HTTP/1.1\r\nUser-Agent: nc/0.0.1\r\nHost: 127.0.0.1\r\nAccept: */*\r\n\r\n"
         echo "" > $SPAMMER_STATS_FILE
         echo -ne "GET /containers/${SPAMMER_CONTAINER_ID}/stats HTTP/1.1\r\n\r\n" | sudo nc -U /var/run/docker.sock >> $SPAMMER_STATS_FILE
     ;;
