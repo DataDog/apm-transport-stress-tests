@@ -9,7 +9,7 @@
 
 # Name and location of a persistent PID file
 
-PIDFILE="/observer-pid.txt"
+PIDFILE="./observer-pid.txt"
 
 #--------------------------------------
 # Check command line option and run...
