@@ -83,6 +83,11 @@ do
     docker-compose logs --no-color --no-log-prefix -f $container > $container_log &
 done
 
+# docker inspect transport-spammer
+export SPAMMER_CONTAINER_ID=$(docker inspect --format="{{.Id}}" transport-spammer)
+
+echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
+
 echo "Starting observer"
 ./observe.sh start
 
