@@ -1,5 +1,9 @@
-﻿Console.WriteLine("Spamming traces");
-Console.WriteLine();
+﻿
+Console.WriteLine($"Waiting for ready at {DateTime.Now.Ticks}.");
+
+Thread.Sleep(10000);
+
+Console.WriteLine($"Starting at {DateTime.Now.Ticks}.");
 
 while (true)
 {

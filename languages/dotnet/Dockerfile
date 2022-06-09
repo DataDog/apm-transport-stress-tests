@@ -17,4 +17,8 @@ COPY --from=build /app/out .
 RUN mkdir -p /var/log/datadog/dotnet
 RUN chmod a+rwx /var/log/datadog/dotnet
 
+RUN mkdir -p /signals
+RUN chmod a+rwx /signals
+RUN echo "pls" > /signals/waiting.txt
+
 CMD ["dotnet", "Spammer.Dotnet.dll"]
