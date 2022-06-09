@@ -12,6 +12,7 @@ export TRANSPORT_STRESS_TIMEOUT_MS=${2:-60000}
 export DD_TEST_STALL_REQUEST_SECONDS=${3:-5}
 
 export DD_TRACE_DEBUG="0"
+export DD_LOG_LEVEL="debug"
 export DD_ENV="transport-tests"
 export DD_VERSION="main"
 
@@ -69,11 +70,21 @@ docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
+echo "Cleaning any stale ready signals"
+rm -f ./tmp/signals/ready.txt
+
 echo "Starting containers in background"
-docker-compose up -d --force-recreate
+docker-compose up -d
+
+echo "Waiting to signal spammer"
+sleep 5
+mkdir -p ./tmp
+mkdir -p ./tmp/signals
+echo "Ready, set, go!" > ./tmp/signals/ready.txt
+docker cp ./tmp/signals/. transport-spammer:/app
 
 export container_log_folder="unset"
-containers=("mockagent" "spammer")
+containers=("mockagent" "spammer" "observer")
 
 # Save docker logs
 for container in ${containers[@]}

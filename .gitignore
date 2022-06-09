@@ -353,3 +353,4 @@ MigrationBackup/
 /dd-apm-test-agent/*
 /results/*
 /dd-apm-test-agent/
+/tmp/*

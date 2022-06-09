@@ -1,5 +1,11 @@
 #!/usr/bin/env node
+
 const tracer = require('dd-trace').init();
+
+console.log('Waiting for ready.');
+setTimeout(function() {
+    // no-op
+}, 10000);
 
 console.log('Starting nodejs spammer.');
 
