@@ -16,6 +16,7 @@ services:
       - DD_DOGSTATSD_SOCKET
       - DD_API_KEY
       - DD_ENV
+      - DD_TEST_STALL_REQUEST_SECONDS
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -53,4 +54,4 @@ services:
     cpus: 1
     cpu_percent: 80
     mem_limit: 100m
-  
+    

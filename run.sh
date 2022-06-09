@@ -8,8 +8,8 @@ set -eu
 
 # uds|tcpip
 export TRANSPORT=${1:-uds}
-
-export TRANSPORT_STRESS_TIMEOUT_MS=${2:-30000}
+export TRANSPORT_STRESS_TIMEOUT_MS=${2:-60000}
+export DD_TEST_STALL_REQUEST_SECONDS=${3:-5}
 
 export DD_TRACE_DEBUG="0"
 export DD_ENV="transport-tests"
@@ -89,13 +89,13 @@ export SPAMMER_CONTAINER_ID=$(docker inspect --format="{{.Id}}" transport-spamme
 echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 
 echo "Starting observer"
-./observe.sh start
+# ./observe.sh start
 
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
 echo "Stopping observer"
-./observe.sh stop
+# ./observe.sh stop
 
 echo "Stopping all containers"
 docker-compose down --remove-orphans
