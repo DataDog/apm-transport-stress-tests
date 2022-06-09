@@ -70,18 +70,8 @@ docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
-echo "Cleaning any stale ready signals"
-rm -f ./tmp/signals/ready.txt
-
 echo "Starting containers in background"
 docker-compose up -d
-
-echo "Waiting to signal spammer"
-sleep 5
-mkdir -p ./tmp
-mkdir -p ./tmp/signals
-echo "Ready, set, go!" > ./tmp/signals/ready.txt
-docker cp ./tmp/signals/. transport-spammer:/app
 
 export container_log_folder="unset"
 containers=("mockagent" "spammer" "observer")
