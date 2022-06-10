@@ -16,10 +16,6 @@ echo =============== Building Agent ===============
 
 AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
 docker build --progress=plain -f ${AGENT_DOCKERFILE} -t transport-mockagent .
-
-echo =============== Building Orchestrator ===============
-
-docker build --progress=plain -f ./Orchestrator/Dockerfile -t transport-orchestrator ./Orchestrator
 	
 echo =============== Building Spammer ===============
 
