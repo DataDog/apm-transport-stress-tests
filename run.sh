@@ -71,7 +71,10 @@ docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 echo "Starting containers in background"
-docker-compose up -d
+docker-compose up -d --scale concurrent-spammer=5
+
+echo "Displaying containers"
+docker ps
 
 export container_log_folder="unset"
 containers=("mockagent" "spammer" "observer")
