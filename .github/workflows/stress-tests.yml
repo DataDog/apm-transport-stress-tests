@@ -32,6 +32,10 @@ jobs:
             agent: mockagent
             concurrent: 5
             
+          - library: ruby
+            agent: mockagent
+            concurrent: 5
+            
       fail-fast: false
     steps:
     - name: Checkout
