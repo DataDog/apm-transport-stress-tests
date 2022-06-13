@@ -68,7 +68,6 @@ echo ============ Run $TRANSPORT tests ===================
 echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 
 docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
-docker inspect transport-orchestrator > $OUTPUT_FOLDER/image_orchestrator.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 echo "Starting containers in background"
@@ -78,7 +77,7 @@ echo "Displaying containers"
 docker ps
 
 export container_log_folder="unset"
-containers=("mockagent" "spammer" "observer")
+containers=("mockagent" "spammer")
 
 # Save docker logs
 for container in ${containers[@]}
@@ -93,13 +92,13 @@ export SPAMMER_CONTAINER_ID=$(docker inspect --format="{{.Id}}" transport-spamme
 
 echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 
-echo "Starting observer"
+# echo "Starting observer"
 # ./observe.sh start
 
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
-echo "Stopping observer"
+# echo "Stopping observer"
 # ./observe.sh stop
 
 echo "Stopping all containers"
