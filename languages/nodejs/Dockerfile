@@ -9,4 +9,6 @@ WORKDIR /app
 
 COPY . ./
 
+RUN npm install dd-trace --save
+
 CMD node ./index.js

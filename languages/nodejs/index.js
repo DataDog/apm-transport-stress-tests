@@ -11,27 +11,31 @@ console.log('Starting nodejs spammer.');
 
 var traceCount = 0;
 
-var maxRuns = 10000000;
+var maxRuns = 100000000;
 
-while (true) {
+var sendLots = function() {
     tracer.trace('spam', { resource: 'spammer' }, () => {
-        tracer.trace('nested-spam', {}, () => {
-              setTimeout(function() {
-				  // no-op
-				}, 1);
-        })
+		setTimeout(function() {	
+            tracer.trace('nested-spam', {}, () => {})
+		}, 1);
     })
 	
 	traceCount++;
 	
-	if (traceCount % 100 == 0) {
-		console.log('Another 100 traces sent.')
-	}
+	if (traceCount % 1000 == 0) {
+		console.log('Another 1000 traces sent.')
+	}	
 	
 	if (--maxRuns <= 0) {
 		console.log('Exceeded maximum runs.');
-		break;
+		return false;
 	}
-}
+	
+	setTimeout(function() {	
+        sendLots();
+	}, 1);
+};
+
+sendLots();
 
 console.log('Exiting nodejs spammer');
