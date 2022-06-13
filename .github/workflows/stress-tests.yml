@@ -7,14 +7,20 @@ on:
     branches: [ main ]
 
 jobs:
-  build-dotnet:
+  stress-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - library: dotnet
+          - library: nodejs
+          - library: python
     steps:
     - name: Checkout
       uses: actions/checkout@v3
       
     - name: Build
-      run: ./build.sh dotnet mockagent
+      run: ./build.sh ${{ matrix.library }} mockagent
       
     - name: Run TCPIP
       run: ./run.sh tcpip
@@ -29,5 +35,5 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
-        name: results_dotnet
+        name: results_${{ matrix.library }}
         path: results
