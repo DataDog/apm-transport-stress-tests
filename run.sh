@@ -11,8 +11,15 @@ export TRANSPORT=${1:-uds}
 export TRANSPORT_STRESS_TIMEOUT_MS=${2:-60000}
 export DD_TEST_STALL_REQUEST_SECONDS=${3:-2}
 
-export DD_TRACE_DEBUG="0"
-export DD_LOG_LEVEL="debug"
+
+if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
+    export DD_TRACE_DEBUG="0"
+    export DD_LOG_LEVEL="info"
+else
+    export DD_TRACE_DEBUG="1"
+    export DD_LOG_LEVEL="debug"
+fi
+
 export DD_ENV="transport-tests"
 export DD_VERSION="main"
 
