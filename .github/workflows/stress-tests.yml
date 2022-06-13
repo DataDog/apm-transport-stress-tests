@@ -14,10 +14,24 @@ jobs:
         include:
           - library: dotnet
             agent: mockagent
+            concurrent: 5
+            
+          - library: dotnet
+            agent: realagent
+            concurrent: 8
+            
           - library: nodejs
             agent: mockagent
+            concurrent: 5
+            
           - library: python
             agent: mockagent
+            concurrent: 5
+            
+          - library: golang
+            agent: mockagent
+            concurrent: 5
+            
       fail-fast: false
     steps:
     - name: Checkout
@@ -30,11 +44,13 @@ jobs:
       run: ./run.sh tcpip
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
+        CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
       
     - name: Run UDS
       run: ./run.sh uds
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
+        CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
       
     - name: Upload artifact
       uses: actions/upload-artifact@v3
