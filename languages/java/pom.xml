@@ -24,7 +24,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>bin/</classpathPrefix>
-              <mainClass>com.datadog.transporttests.Spammer</mainClass>
+              <mainClass>Spammer</mainClass>
             </manifest>
           </archive>
         </configuration>
