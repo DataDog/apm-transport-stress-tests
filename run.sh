@@ -11,7 +11,7 @@ export TRANSPORT=${1:-uds}
 export TRANSPORT_STRESS_TIMEOUT_MS=${2:-120000}
 export DD_TEST_STALL_REQUEST_SECONDS=${3:-4}
 
-export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:-5}
+export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:-10}
 
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
@@ -78,7 +78,7 @@ echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
-echo "Starting containers in background"
+echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMER}"
 docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMER}
 
 echo "Displaying containers"

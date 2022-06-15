@@ -42,7 +42,7 @@ services:
       - "9126:9126/tcp"
       - "9125:9125/udp"
     cpu_count: 1
-    cpus: 0.3
+    cpus: 0.1
     cpu_percent: 10
     mem_limit: 50m
         
