@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.datadog.transporttests</groupId>
   <artifactId>Spammer</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
   <name>Spammer</name>
   <build>
     <sourceDirectory>src</sourceDirectory>
