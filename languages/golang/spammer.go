@@ -8,6 +8,7 @@ import (
 
 func makenestedspan() {
 	span := tracer.StartSpan("nested-spam")
+	time.Sleep(1 * time.Millisecond)
 	defer span.Finish()
 }
 
@@ -25,7 +26,6 @@ func main() {
 
 	for {
 		makespan()
-		time.Sleep(0.001)
 	}
 
 	fmt.Printf("Finishing at: %v\n", time.Now().Unix())
