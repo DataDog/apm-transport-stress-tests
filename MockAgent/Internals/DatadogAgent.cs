@@ -22,6 +22,8 @@ namespace MockAgent
         private readonly Socket? _udsTracesSocket;
         private readonly UnixDomainSocketEndPoint _statsEndpoint;
         private readonly Socket _udsStatsSocket;
+		
+		private int? ThrottleMilliseconds;
 
         public DatadogAgent(UnixDomainSocketConfig config)
         {
@@ -617,7 +619,13 @@ namespace MockAgent
 
         private void ArtificiallyThrottle()
         {
-            Thread.Sleep(1);
+			if (ThrottleMilliseconds == null) {
+				var msThrottleVar = Environment.GetEnvironmentVariable("DD_TEST_STALL_REQUEST_SECONDS") ?? "0";
+                int.TryParse(msThrottleVar, out var parsed);
+				ThrottleMilliseconds = parsed * 1000;
+				 
+			}
+            Thread.Sleep(500);
         }
     }
 }
