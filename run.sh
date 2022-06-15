@@ -9,16 +9,16 @@ set -eu
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 export TRANSPORT_STRESS_TIMEOUT_MS=${2:-120000}
-export DD_TEST_STALL_REQUEST_SECONDS=${3:-2}
+export DD_TEST_STALL_REQUEST_SECONDS=${3:-4}
 
 export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:-5}
 
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
-    export DD_TRACE_DEBUG="0"
-    export DD_LOG_LEVEL="info"
-else
     export DD_TRACE_DEBUG="1"
     export DD_LOG_LEVEL="debug"
+else
+    export DD_TRACE_DEBUG="0"
+    export DD_LOG_LEVEL="info"
 fi
 
 export DD_ENV="transport-tests"
@@ -85,7 +85,7 @@ echo "Displaying containers"
 docker ps
 
 export container_log_folder="unset"
-containers=("mockagent" "spammer")
+containers=("mockagent" "spammer" "observer")
 
 # Save docker logs
 for container in ${containers[@]}
