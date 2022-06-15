@@ -18,12 +18,14 @@ func makespan() {
 }
 
 func main() {
-	fmt.Printf("Starting at: %v\n", time.Now().Unix())
+	fmt.Printf("Waiting 10 seconds for agent ot be ready")
+	time.Sleep(10)
+	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
 
 	for {
 		makespan()
-		time.Sleep(1)
+		time.Sleep(0.001)
 	}
 
 	fmt.Printf("Finishing at: %v\n", time.Now().Unix())

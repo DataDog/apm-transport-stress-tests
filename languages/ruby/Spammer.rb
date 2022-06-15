@@ -4,6 +4,10 @@ Datadog.configure do |c|
   # Add additional configuration here.
 end
 
+print "Waiting ten seconds for agent to be ready\n"
+
+sleep(10)
+
 print "Starting spammer!\n"
 
 limit = 100000000
