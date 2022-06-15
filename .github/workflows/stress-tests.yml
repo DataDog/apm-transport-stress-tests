@@ -17,6 +17,10 @@ jobs:
             concurrent: 5
             
           - library: dotnet
+            agent: dotnetagent
+            concurrent: 5
+            
+          - library: dotnet
             agent: realagent
             concurrent: 10
             
