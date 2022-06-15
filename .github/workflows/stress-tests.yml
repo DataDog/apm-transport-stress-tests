@@ -18,7 +18,7 @@ jobs:
             
           - library: dotnet
             agent: realagent
-            concurrent: 8
+            concurrent: 10
             
           - library: nodejs
             agent: mockagent
@@ -33,6 +33,10 @@ jobs:
             concurrent: 5
             
           - library: ruby
+            agent: mockagent
+            concurrent: 5
+            
+          - library: java
             agent: mockagent
             concurrent: 5
             
