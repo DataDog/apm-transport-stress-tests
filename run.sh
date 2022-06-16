@@ -8,10 +8,10 @@ set -eu
 
 # uds|tcpip
 export TRANSPORT=${1:-uds}
-export TRANSPORT_STRESS_TIMEOUT_MS=${2:-120000}
+export TRANSPORT_STRESS_TIMEOUT_MS=${2:-240000}
 export DD_TEST_STALL_REQUEST_SECONDS=${3:-4}
 
-export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:-9}
+export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:-20}
 
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
@@ -36,7 +36,8 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=6126
     export DD_APM_RECEIVER_PORT=6126
     export DD_DOGSTATSD_PORT=6125
-	export DD_SERVICE="tcp"
+	export DD_SERVICE="tcpip"
+	export DD_TAGS="transport:tcpip"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
@@ -58,6 +59,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 	fi
 
 	export DD_SERVICE="uds"	
+	export DD_TAGS="transport:uds"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
