@@ -11,9 +11,10 @@ services:
      - mockagent
      - spammer
     environment:
-      - DD_API_KEY
-      - DD_ENV
+      - DD_APM_ENABLED=false
       - DD_LOG_LEVEL
+      - DD_ENV
+      - DD_API_KEY
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -24,14 +25,17 @@ services:
     image: transport-mockagent
     environment:
       - DD_APM_RECEIVER_PORT
-      - DD_TRACE_AGENT_PORT
+      # - DD_TRACE_AGENT_PORT
       - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
-      - DD_API_KEY
-      - DD_ENV
       - DD_TEST_STALL_REQUEST_SECONDS
       - DD_LOG_LEVEL
+      - DD_HOSTNAME
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_ENV
+      - DD_API_KEY
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -39,12 +43,12 @@ services:
       - ./tmp/uds-volume/:/var/run/datadog
       - ./results/${TRANSPORT}/mockagent/snapshots:/snapshots
     ports:
-      - "9126:9126/tcp"
-      - "9125:9125/udp"
-    cpu_count: 1
-    cpus: 0.1
-    cpu_percent: 10
-    mem_limit: 50m
+      - "6126:6126"
+      - "6125:6125/udp"
+    # cpu_count: 1
+    # cpus: 0.1
+    # cpu_percent: 10
+    # mem_limit: 50m
         
   spammer:
     container_name: transport-spammer
@@ -57,10 +61,10 @@ services:
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
       - DD_TRACE_DEBUG
-      - DD_ENV
       - DD_SERVICE
       - DD_VERSION
       - DD_LOG_LEVEL
+      - DD_ENV
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
@@ -76,9 +80,9 @@ services:
       - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
-      - DD_ENV
       - DD_SERVICE
       - DD_VERSION
+      - DD_ENV
     volumes:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:

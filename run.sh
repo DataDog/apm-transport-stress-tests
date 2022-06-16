@@ -33,17 +33,19 @@ OS_UNAME=$(uname -s)
 echo OS: $OS_UNAME
 	
 if [[ "$TRANSPORT" == "tcpip" ]]; then
-    export DD_TRACE_AGENT_PORT=9126
-    export DD_APM_RECEIVER_PORT=9126
-    export DD_DOGSTATSD_PORT=9125
+    export DD_TRACE_AGENT_PORT=6126
+    export DD_APM_RECEIVER_PORT=6126
+    export DD_DOGSTATSD_PORT=6125
 	export DD_SERVICE="tcp"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
+		export DD_HOSTNAME=host.docker.internal
 		echo Operating on a windows host with host.docker.internal
 	else
 		#export DD_AGENT_HOST=127.0.0.1
 		export DD_AGENT_HOST=mockagent
+		export DD_HOSTNAME=mockagent
 		echo Operating on a non-windows host with localhost
 	fi
 	
@@ -62,6 +64,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} and DSD on ${DD_DOGSTATSD_SOCKET}
 	
 	unset DD_AGENT_HOST
+	unset DD_HOSTNAME
 	unset DD_TRACE_AGENT_PORT
 	unset DD_APM_RECEIVER_PORT
 	unset DD_DOGSTATSD_PORT

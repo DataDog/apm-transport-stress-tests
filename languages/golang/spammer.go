@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 	"time"
+
+	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
 func makenestedspan() {
@@ -19,8 +20,8 @@ func makespan() {
 }
 
 func main() {
-	fmt.Printf("Waiting 10 seconds for agent ot be ready")
-	time.Sleep(10)
+	fmt.Printf("Waiting 10 seconds for agent to be ready\n")
+	time.Sleep(10 * time.Second)
 	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
 
