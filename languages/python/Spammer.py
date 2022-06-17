@@ -4,7 +4,7 @@ from ddtrace import tracer
 
 print("Starting spammer")
 
-@tracer.wrap("nested-spam", service="my-sandwich-making-svc")
+@tracer.wrap("nested-spam")
 def nested_spam():
     time.sleep(0.001)   # Sleep for 1 milliseconds
     return
