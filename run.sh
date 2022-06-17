@@ -11,7 +11,11 @@ export TRANSPORT=${1:-uds}
 
 export TRANSPORT_STRESS_TIMEOUT_MS=${TRANSPORT_STRESS_TIMEOUT_MS:=480000}
 export DD_TEST_STALL_REQUEST_SECONDS=${DD_TEST_STALL_REQUEST_SECONDS:=4}
-export CONCURRENT_SPAMMER=${CONCURRENT_SPAMMER:=15}
+export CONCURRENT_SPAMMERS=${CONCURRENT_SPAMMERS:=10}
+export TRACER=${TRACER:=unknown}
+export RUN_ID=$(date +%s)
+
+echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
 
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
@@ -37,7 +41,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_APM_RECEIVER_PORT=6126
     export DD_DOGSTATSD_PORT=6125
 	export DD_SERVICE="tcpip"
-	export DD_TAGS="transport:tcpip"
+	export DD_TAGS="run_id:${RUN_ID},transport:tcpip,tracer:${TRACER}"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
@@ -59,7 +63,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 	fi
 
 	export DD_SERVICE="uds"	
-	export DD_TAGS="transport:uds"
+	export DD_TAGS="run_id:${RUN_ID},transport:uds,tracer:${TRACER}"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
@@ -83,8 +87,8 @@ echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
-echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMER}"
-docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMER}
+echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
+docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}
 
 echo "Displaying containers"
 docker ps

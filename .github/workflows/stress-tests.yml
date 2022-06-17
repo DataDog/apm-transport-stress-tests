@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: '42 * * * *' # 42nd minute of every hour
 
 jobs:
   stress-tests:
@@ -12,33 +14,33 @@ jobs:
     strategy:
       matrix:
         include:
-          - library: dotnet
-            agent: mockagent
-            concurrent: 5
+          # - library: dotnet
+          #   agent: mockagent
+          #   concurrent: 5
             
           - library: dotnet
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: nodejs
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: python
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: golang
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: ruby
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: java
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
       fail-fast: false
     steps:
@@ -53,12 +55,14 @@ jobs:
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
+        TRACER: ${{ matrix.library }}
       
     - name: Run UDS
       run: ./run.sh uds
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
+        TRACER: ${{ matrix.library }}
       
     - name: Upload artifact
       uses: actions/upload-artifact@v3
