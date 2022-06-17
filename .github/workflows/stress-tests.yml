@@ -57,11 +57,11 @@ jobs:
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
 
-    - name: UDS Spammer Logs
-      run: cat ./results/tcpip/logs/spammer-stdout.log
+    - name: TCPIP Spammer Logs
+      run: ./show-logs.sh tcpip ${{ matrix.library }} spammer
          
-    - name: UDS Agent Logs
-      run: cat ./results/tcpip/logs/mockagent-stdout.log
+    - name: TCPIP Agent Logs
+      run: ./show-logs.sh tcpip ${{ matrix.library }} mockagent
       
     - name: Run UDS
       run: ./run.sh uds
@@ -69,12 +69,12 @@ jobs:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
-         
+        
     - name: UDS Spammer Logs
-      run: cat ./results/uds/logs/spammer-stdout.log
+      run: ./show-logs.sh uds ${{ matrix.library }} spammer
          
     - name: UDS Agent Logs
-      run: cat ./results/uds/logs/mockagent-stdout.log
+      run: ./show-logs.sh uds ${{ matrix.library }} mockagent
       
     - name: Upload artifact
       uses: actions/upload-artifact@v3
