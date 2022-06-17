@@ -5,6 +5,8 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: '42 * * * *' # 42nd minute of every hour
 
 jobs:
   stress-tests:
@@ -53,12 +55,14 @@ jobs:
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
+        TRACER: ${{ matrix.library }}
       
     - name: Run UDS
       run: ./run.sh uds
       env:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
+        TRACER: ${{ matrix.library }}
       
     - name: Upload artifact
       uses: actions/upload-artifact@v3
