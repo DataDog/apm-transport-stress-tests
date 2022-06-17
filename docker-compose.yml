@@ -76,7 +76,7 @@ services:
       - DD_LOG_LEVEL
       - DD_ENV
       - DD_TAGS
-      - DD_TRACE_SAMPLE_RATE=1
+      # - DD_TRACE_SAMPLE_RATE=1
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
