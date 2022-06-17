@@ -1,13 +1,20 @@
 import ddtrace
 import time
+from ddtrace import tracer
 
 print("Starting spammer")
 
-F = 100000000
+@tracer.wrap("nested-spam")
+def nested_spam():
+    time.sleep(0.001)   # Sleep for 1 milliseconds
+    return
 
-while True or limit <= 0:
-    ddtrace.tracer.trace('span').finish()
-    time.sleep(0.001)
-    limit =- 1
+@tracer.wrap("spam", resource="spammer")
+def spam():
+    nested_spam()
+    return
+
+while True:
+    spam()
 
 print("Reached limit, exiting")
