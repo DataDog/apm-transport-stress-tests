@@ -18,29 +18,29 @@ jobs:
           #   agent: mockagent
           #   concurrent: 5
             
-          # - library: dotnet
-          #   agent: realagent
-          #   concurrent: 20
+          - library: dotnet
+            agent: realagent
+            concurrent: 0
             
-          # - library: nodejs
-          #   agent: realagent
-          #   concurrent: 20
+          - library: nodejs
+            agent: realagent
+            concurrent: 0
           
           - library: python
             agent: realagent
             concurrent: 0
           
-          # - library: golang
-          #   agent: realagent
-          #   concurrent: 20
-          #   
-          # - library: ruby
-          #   agent: realagent
-          #   concurrent: 20
-          #   
-          # - library: java
-          #   agent: realagent
-          #   concurrent: 20
+          - library: golang
+            agent: realagent
+            concurrent: 0
+            
+          - library: ruby
+            agent: realagent
+            concurrent: 0
+            
+          - library: java
+            agent: realagent
+            concurrent: 0
             
       fail-fast: false
     steps:

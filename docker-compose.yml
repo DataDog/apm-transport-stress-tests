@@ -27,34 +27,38 @@ services:
   mockagent:
     container_name: transport-mockagent
     image: transport-mockagent
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://${DD_AGENT_HOST}:5555"]
+    #   interval: 1s
+    #   start_period: 10s
+    #   retries: 30
     environment:
       - DD_APM_RECEIVER_PORT
-      # - DD_TRACE_AGENT_PORT
       - DD_DOGSTATSD_PORT
       - DD_APM_RECEIVER_SOCKET
       - DD_DOGSTATSD_SOCKET
       - DD_TEST_STALL_REQUEST_SECONDS
       - DD_LOG_LEVEL
       - DD_HOSTNAME
-      - DD_APM_ENABLED=true
-      - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_ENV
       - DD_API_KEY
       - DD_TAGS
-      - DD_TRACE_SAMPLE_RATE=1.0
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_HEALTH_PORT=5555
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
       - ./tmp/uds-volume/:/var/run/datadog
-      - ./results/${TRANSPORT}/mockagent/snapshots:/snapshots
     ports:
+      - "5555:5555"
       - "6126:6126"
       - "6125:6125/udp"
     # cpu_count: 1
     # cpus: 0.1
     # cpu_percent: 10
-    # mem_limit: 50m
+    # mem_limit: 200m
         
   spammer:
     container_name: transport-spammer
@@ -72,7 +76,7 @@ services:
       - DD_LOG_LEVEL
       - DD_ENV
       - DD_TAGS
-      - DD_TRACE_SAMPLE_RATE=1.0
+      - DD_TRACE_SAMPLE_RATE=1
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
