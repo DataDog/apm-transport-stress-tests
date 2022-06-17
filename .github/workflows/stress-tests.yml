@@ -14,33 +14,33 @@ jobs:
     strategy:
       matrix:
         include:
-          - library: dotnet
-            agent: mockagent
-            concurrent: 5
+          # - library: dotnet
+          #   agent: mockagent
+          #   concurrent: 5
             
           - library: dotnet
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: nodejs
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: python
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: golang
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: ruby
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
           - library: java
             agent: realagent
-            concurrent: 10
+            concurrent: 15
             
       fail-fast: false
     steps:
