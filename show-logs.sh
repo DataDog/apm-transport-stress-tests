@@ -8,7 +8,7 @@ set -eu
 
 TRANSPORT=${1:-unknown}
 LANGUAGE=${2:-unknown}
-CONTAINER=${2:-unknown}
+CONTAINER=${3:-unknown}
 
 OUTPUT_FOLDER=./results/$TRANSPORT
 LOGS_FOLDER=${OUTPUT_FOLDER}/logs
