@@ -41,6 +41,7 @@ services:
       - DD_ENV
       - DD_API_KEY
       - DD_TAGS
+      - DD_TRACE_SAMPLE_RATE=1.0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -71,6 +72,7 @@ services:
       - DD_LOG_LEVEL
       - DD_ENV
       - DD_TAGS
+      - DD_TRACE_SAMPLE_RATE=1.0
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
