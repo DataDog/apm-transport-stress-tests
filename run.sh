@@ -16,7 +16,7 @@ export TRACER=${TRACER:=unknown}
 export RUN_ID=$(date +%s)
 
 if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
-    export CONCURRENT_SPAMMERS=5
+    export CONCURRENT_SPAMMERS=10
 fi
 
 echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
