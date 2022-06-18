@@ -46,6 +46,7 @@ services:
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_HEALTH_PORT=5555
+      - DD_HOSTNAME=mockagent${TRANSPORT}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
