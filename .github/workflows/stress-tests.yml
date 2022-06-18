@@ -20,27 +20,27 @@ jobs:
             
           - library: dotnet
             agent: realagent
-            concurrent: 0
+            concurrent: 1
             
           - library: nodejs
             agent: realagent
-            concurrent: 0
+            concurrent: 1
           
           - library: python
             agent: realagent
-            concurrent: 0
+            concurrent: 1
           
           - library: golang
             agent: realagent
-            concurrent: 0
+            concurrent: 1
             
           - library: ruby
             agent: realagent
-            concurrent: 0
+            concurrent: 1
             
           - library: java
             agent: realagent
-            concurrent: 0
+            concurrent: 1
             
       fail-fast: false
     steps:
