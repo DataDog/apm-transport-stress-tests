@@ -40,10 +40,10 @@ services:
       - DD_DOGSTATSD_SOCKET
       - DD_TEST_STALL_REQUEST_SECONDS
       - DD_LOG_LEVEL
-      - DD_HOSTNAME
       - DD_ENV
       - DD_API_KEY
       - DD_TAGS
+      - DD_SERVICE
       - DD_VERSION
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
