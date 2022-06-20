@@ -45,7 +45,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_APM_RECEIVER_PORT=6126
     export DD_DOGSTATSD_PORT=6125
 	export DD_SERVICE="tcpip"
-	export DD_TAGS="run_id:${RUN_ID},transport:tcpip,tracer:${TRACER}"
+	export DD_TAGS="run_id:${RUN_ID} transport:tcpip tracer:${TRACER}"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
