@@ -71,7 +71,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_DOGSTATSD_PORT=6125
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="tcpip"
-	export DD_TAGS="runid:${RUN_ID}" # transport:tcpip tracer:${TRACER}"
+	export DD_TAGS="runid:${RUN_ID} transport:tcpip tracer:${TRACER} concurrency:${CONCURRENT_SPAMMERS}"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
@@ -94,7 +94,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
-	export DD_TAGS="runid:${RUN_ID}"
+	export DD_TAGS="runid:${RUN_ID} transport:uds tracer:${TRACER} concurrency:${CONCURRENT_SPAMMERS}"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
