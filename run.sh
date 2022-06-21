@@ -16,11 +16,11 @@ export TRACER=${TRACER:=unknown}
 export RUN_ID=$(date +%s)
 
 if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
-    export CONCURRENT_SPAMMERS=15
+    export CONCURRENT_SPAMMERS=20
 fi
 
 TAG_LENGTH=1000
-TAG_COUNT=10
+TAG_COUNT=100
 
 GLOBAL_TAGS_FILLER=""
 TAG_VALUE=""
@@ -30,6 +30,8 @@ do
 	TAG_VALUE+="A"
 done
 	
+echo "Using global tags filler [$TAG_COUNT] with a value length of ${TAG_LENGTH}"
+
 for ((i=TAG_COUNT; i>=1; i--))
 do
     GLOBAL_TAGS_FILLER+="tag${i}:${TAG_VALUE}, "
@@ -39,7 +41,6 @@ GLOBAL_TAGS_FILLER=${GLOBAL_TAGS_FILLER::-2}
 
 export DD_TRACE_GLOBAL_TAGS=$GLOBAL_TAGS_FILLER
 
-echo "Using global tags filler: ${DD_TRACE_GLOBAL_TAGS}"
 
 echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
 
