@@ -80,7 +80,7 @@ services:
       - DD_VERSION
       - DD_LOG_LEVEL
       - DD_ENV
-      - DD_TAGS
+      # - DD_TAGS
       - DD_TRACE_GLOBAL_TAGS
       # - DD_TRACE_SAMPLE_RATE=1
     volumes:
