@@ -15,7 +15,11 @@ export CONCURRENT_SPAMMERS=${CONCURRENT_SPAMMERS:=DEFAULT}
 export TRACER=${TRACER:=unknown}
 export RUN_ID=$(date +%s)
 
-TAG_LENGTH=10
+if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
+    export CONCURRENT_SPAMMERS=15
+fi
+
+TAG_LENGTH=1000
 TAG_COUNT=10
 
 GLOBAL_TAGS_FILLER=""
@@ -33,13 +37,9 @@ done
 
 GLOBAL_TAGS_FILLER=${GLOBAL_TAGS_FILLER::-2}
 
-export DD_TRACE_GLOBAL_TAGS="" # $GLOBAL_TAGS_FILLER
+export DD_TRACE_GLOBAL_TAGS=$GLOBAL_TAGS_FILLER
 
 echo "Using global tags filler: ${DD_TRACE_GLOBAL_TAGS}"
-
-if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
-    export CONCURRENT_SPAMMERS=5
-fi
 
 echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
 
@@ -51,8 +51,10 @@ else
     export DD_LOG_LEVEL="info"
 fi
 
-export DD_ENV="transport-tests"
-export DD_VERSION="main"
+export RUNNER=${GITHUB_REF:=$HOSTNAME}
+export DD_ENV="transport-tests-${RUNNER}"
+
+echo "Using env of ${DD_ENV}"
 
 mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
