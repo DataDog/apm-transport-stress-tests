@@ -51,8 +51,10 @@ else
     export DD_LOG_LEVEL="info"
 fi
 
-export DD_ENV="transport-tests"
-export DD_VERSION="main"
+export GITHUB_REF=${GITHUB_REF:=$HOSTNAME}
+export DD_ENV="transport-tests-${GITHUB_REF}"
+
+echo "Using env of ${DD_ENV}"
 
 mkdir -p ./results
 OUTPUT_FOLDER=./results/$TRANSPORT
