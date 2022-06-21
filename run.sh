@@ -16,7 +16,7 @@ export TRACER=${TRACER:=unknown}
 export RUN_ID=$(date +%s)
 
 if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
-    export CONCURRENT_SPAMMERS=1
+    export CONCURRENT_SPAMMERS=0
 fi
 
 TAG_LENGTH=1000
