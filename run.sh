@@ -65,13 +65,16 @@ OS_UNAME=$(uname -s)
 
 echo OS: $OS_UNAME
 	
+export DD_TAGS="runid:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
+
+echo "Sending DD_TAGS $DD_TAGS"
+
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=6126
     export DD_APM_RECEIVER_PORT=6126
     export DD_DOGSTATSD_PORT=6125
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="tcpip"
-	export DD_TAGS="runid:${RUN_ID} transport:tcpip tracer:${TRACER} concurrency:${CONCURRENT_SPAMMERS}"
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
 		export DD_AGENT_HOST=host.docker.internal
@@ -94,7 +97,6 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
-	export DD_TAGS="runid:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
