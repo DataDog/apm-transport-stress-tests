@@ -56,26 +56,7 @@ jobs:
           - library: java
             agent: realagent
             concurrent: 5
-                     
-          - library: dotnet
-            agent: realagent
-            concurrent: 10
-          - library: nodejs
-            agent: realagent
-            concurrent: 10
-          - library: python
-            agent: realagent
-            concurrent: 10
-          - library: golang
-            agent: realagent
-            concurrent: 10
-          - library: ruby
-            agent: realagent
-            concurrent: 10
-          - library: java
-            agent: realagent
-            concurrent: 10
-
+   
           - library: dotnet
             agent: realagent
             concurrent: 20
