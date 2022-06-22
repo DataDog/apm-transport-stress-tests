@@ -18,47 +18,82 @@ jobs:
         include:
           # - library: dotnet
           #   agent: mockagent
-          #   concurrent: 5
             
           - library: dotnet
             agent: realagent
             concurrent: 0
-            
-          - library: dotnet
+          - library: nodejs
             agent: realagent
-            concurrent: 1
+            concurrent: 0
+          - library: python
+            agent: realagent
+            concurrent: 0
+          - library: golang
+            agent: realagent
+            concurrent: 0
+          - library: ruby
+            agent: realagent
+            concurrent: 0
+          - library: java
+            agent: realagent
+            concurrent: 0     
 
           - library: dotnet
             agent: realagent
             concurrent: 5
-
+          - library: nodejs
+            agent: realagent
+            concurrent: 5
+          - library: python
+            agent: realagent
+            concurrent: 5
+          - library: golang
+            agent: realagent
+            concurrent: 5
+          - library: ruby
+            agent: realagent
+            concurrent: 5
+          - library: java
+            agent: realagent
+            concurrent: 5
+                     
           - library: dotnet
+            agent: realagent
+            concurrent: 10
+          - library: nodejs
+            agent: realagent
+            concurrent: 10
+          - library: python
+            agent: realagent
+            concurrent: 10
+          - library: golang
+            agent: realagent
+            concurrent: 10
+          - library: ruby
+            agent: realagent
+            concurrent: 10
+          - library: java
             agent: realagent
             concurrent: 10
 
           - library: dotnet
             agent: realagent
             concurrent: 20
-            
-          #- library: nodejs
-          #  agent: realagent
-          #  concurrent: DEFAULT
-          
-          #- library: python
-          #  agent: realagent
-          #  concurrent: DEFAULT
-          
-          #- library: golang
-          #  agent: realagent
-          #  concurrent: DEFAULT
-            
-          #- library: ruby
-          #  agent: realagent
-          #  concurrent: DEFAULT
-            
-          #- library: java
-          #  agent: realagent
-          #  concurrent: DEFAULT
+          - library: nodejs
+            agent: realagent
+            concurrent: 20
+          - library: python
+            agent: realagent
+            concurrent: 20
+          - library: golang
+            agent: realagent
+            concurrent: 20
+          - library: ruby
+            agent: realagent
+            concurrent: 20
+          - library: java
+            agent: realagent
+            concurrent: 20
             
       fail-fast: false
     steps:
@@ -76,6 +111,7 @@ jobs:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
+        TRANSPORT_STRESS_TIMEOUT_MS: 180000
 
     - name: TCPIP Spammer Logs
       run: ./show-logs.sh tcpip ${{ matrix.library }} spammer
@@ -91,6 +127,7 @@ jobs:
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
+        TRANSPORT_STRESS_TIMEOUT_MS: 180000
         
     - name: UDS Spammer Logs
       run: ./show-logs.sh uds ${{ matrix.library }} spammer
