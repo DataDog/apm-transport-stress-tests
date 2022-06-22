@@ -73,7 +73,7 @@ OS_UNAME=$(uname -s)
 
 echo OS: $OS_UNAME
 	
-export DD_TAGS="runid:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
+export DD_TAGS="transport_stress_run_id:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
 
 echo "Sending DD_TAGS $DD_TAGS"
 
