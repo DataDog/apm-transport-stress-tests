@@ -14,9 +14,14 @@ export DD_TEST_STALL_REQUEST_SECONDS=${DD_TEST_STALL_REQUEST_SECONDS:=4}
 export CONCURRENT_SPAMMERS=${CONCURRENT_SPAMMERS:=DEFAULT}
 export TRACER=${TRACER:=unknown}
 
+
+export RUN_ID=${RUN_ID:=unset}
+
 echo "Run id is set to ${RUN_ID}"
 
-export RUN_ID=${RUN_ID:=$(date +%s)}
+if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
+    export RUN_ID=$(date +%s)
+fi
 
 if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
     export CONCURRENT_SPAMMERS=10
