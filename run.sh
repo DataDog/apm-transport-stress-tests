@@ -94,7 +94,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
-	export DD_TAGS="runid:${RUN_ID} transport:uds tracer:${TRACER} concurrency:${CONCURRENT_SPAMMERS}"
+	export DD_TAGS="runid:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
     export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 	
