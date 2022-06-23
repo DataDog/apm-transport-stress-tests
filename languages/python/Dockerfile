@@ -1,4 +1,5 @@
 FROM python:3.9
 COPY ./ .
-RUN pip install ddtrace
+RUN ./install_ddtrace.sh
+# RUN pip install ddtrace
 CMD ["ddtrace-run", "python", "Spammer.py"]

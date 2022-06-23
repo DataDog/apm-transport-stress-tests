@@ -15,7 +15,8 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-RUN wget -O dd-java-agent.jar https://dtdg.co/latest-java-tracer
+RUN ./install_ddtrace.sh
+# RUN wget -O dd-java-agent.jar https://dtdg.co/latest-java-tracer
 
 # CMD ./stall.sh
 CMD java -Xmx362m -javaagent:/app/dd-java-agent.jar -jar /app/target/Spammer-0.0.1.jar
