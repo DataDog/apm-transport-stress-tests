@@ -158,4 +158,6 @@ sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 # ./observe.sh stop
 
 echo "Stopping all containers"
+export DOCKER_CLIENT_TIMEOUT=120
+export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
