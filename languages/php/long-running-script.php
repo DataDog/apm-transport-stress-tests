@@ -15,8 +15,7 @@ function nested_function()
 }
 
 \DDTrace\trace_function(
-    'App',
-    'root_function',
+    'App\root_function',
     function ($span) {
         $span->name = 'span';
         $span->resource = 'spammer';
@@ -24,8 +23,7 @@ function nested_function()
 );
 
 \DDTrace\trace_function(
-    'App',
-    'nested_function',
+    'App\nested_function',
     function ($span) {
         $span->name = 'span';
         $span->resource = 'spammer';
