@@ -35,7 +35,7 @@ for ((i=TAG_LENGTH; i>=1; i--))
 do
 	TAG_VALUE+="A"
 done
-	
+
 echo "Using global tags filler [$TAG_COUNT] with a value length of ${TAG_LENGTH}"
 
 for ((i=TAG_COUNT; i>=1; i--))
@@ -70,7 +70,7 @@ LOGS_FOLDER=${OUTPUT_FOLDER}/logs
 OS_UNAME=$(uname -s)
 
 echo OS: $OS_UNAME
-	
+
 export DD_TAGS="transport_stress_run_id:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
 
 echo "Sending DD_TAGS $DD_TAGS"
@@ -92,7 +92,7 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 		export DD_HOSTNAME=mockagent
 		echo Operating on a non-windows host with localhost
 	fi
-	
+
 	echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT} against ${DD_AGENT_HOST}
 elif [[ "$TRANSPORT" == "uds" ]]; then
 
@@ -103,18 +103,18 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
-    export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
-    export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
-	
+	export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+	export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
+
 	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} and DSD on ${DD_DOGSTATSD_SOCKET}
-	
+
 	unset DD_AGENT_HOST
 	unset DD_HOSTNAME
 	unset DD_TRACE_AGENT_PORT
 	unset DD_APM_RECEIVER_PORT
 	unset DD_DOGSTATSD_PORT
 fi
-	
+
 # Clean logs/ folder
 rm -rf $OUTPUT_FOLDER
 mkdir -p $OUTPUT_FOLDER

@@ -18,7 +18,7 @@ jobs:
         include:
           # - library: dotnet
           #   agent: mockagent
-            
+
           - library: dotnet
             agent: realagent
             concurrent: 0
@@ -36,7 +36,10 @@ jobs:
             concurrent: 0
           - library: java
             agent: realagent
-            concurrent: 0     
+            concurrent: 0
+          - library: php
+            agent: realagent
+            concurrent: 0
 
           - library: dotnet
             agent: realagent
@@ -56,7 +59,10 @@ jobs:
           - library: java
             agent: realagent
             concurrent: 5
-   
+          - library: php
+            agent: realagent
+            concurrent: 5
+
           - library: dotnet
             agent: realagent
             concurrent: 20
@@ -75,15 +81,18 @@ jobs:
           - library: java
             agent: realagent
             concurrent: 20
-            
+          - library: php
+            agent: realagent
+            concurrent: 20
+
       fail-fast: false
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      
+
     - name: Build
       run: ./build.sh ${{ matrix.library }} ${{ matrix.agent }}
-      
+
     - name: Run TCPIP
       run: ./run.sh tcpip
       env:
@@ -96,10 +105,10 @@ jobs:
 
     - name: TCPIP Spammer Logs
       run: ./show-logs.sh tcpip ${{ matrix.library }} spammer
-         
+
     - name: TCPIP Agent Logs
       run: ./show-logs.sh tcpip ${{ matrix.library }} mockagent
-      
+
     - name: Run UDS
       run: ./run.sh uds
       env:
@@ -109,13 +118,13 @@ jobs:
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
         TRANSPORT_STRESS_TIMEOUT_MS: 180000
-        
+
     - name: UDS Spammer Logs
       run: ./show-logs.sh uds ${{ matrix.library }} spammer
-         
+
     - name: UDS Agent Logs
       run: ./show-logs.sh uds ${{ matrix.library }} mockagent
-      
+
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
