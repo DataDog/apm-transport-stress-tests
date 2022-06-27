@@ -1,5 +1,11 @@
 FROM ruby:3.1.2
+
 WORKDIR /app
-COPY ./ .
-RUN bundle install && cp Gemfile.lock Gemfile.lock.new
-CMD ["ruby", "Spammer.rb"]
+
+COPY Gemfile .
+RUN bundle install
+
+COPY spammer.rb .
+
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["bundle exec ruby spammer.rb"]
