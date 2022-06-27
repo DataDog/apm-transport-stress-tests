@@ -95,6 +95,7 @@ jobs:
 
     - name: Run TCPIP
       run: ./run.sh tcpip
+      continue-on-error: true
       env:
         DEBUG_MODE: false
         RUN_ID: ${{ github.run_id }}
@@ -111,6 +112,7 @@ jobs:
 
     - name: Run UDS
       run: ./run.sh uds
+      continue-on-error: true
       env:
         DEBUG_MODE: false
         RUN_ID: ${{ github.run_id }}
