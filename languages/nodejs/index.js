@@ -6,7 +6,7 @@ const StatsD = require('hot-shots');
 
 const oneMs = setTimeout.bind(null, 1);
 const client = new StatsD({
-  port: 'observer:8125',
+  port: 8125,
   globalTags: { env: process.env.NODE_END },
   errorHandler: function (error) {
     console.log('Socket errors caught here:', error);
