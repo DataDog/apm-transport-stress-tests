@@ -7,16 +7,12 @@ import (
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
 )
 
-func makenestedspan() {
-	span := tracer.StartSpan("nested-spam")
-	time.Sleep(1 * time.Millisecond)
-	defer span.Finish()
-}
-
-func makespan() {
+func createTrace() {
 	span := tracer.StartSpan("spam", tracer.ResourceName("spammer"))
-	makenestedspan()
 	defer span.Finish()
+	childSpan := tracer.StartSpan("nested-spam", tracer.ChildOf(span.Context()))
+	time.Sleep(time.Millisecond)
+	childSpan.Finish()
 }
 
 func main() {
@@ -24,11 +20,11 @@ func main() {
 	time.Sleep(10 * time.Second)
 	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
+	defer tracer.Stop()
 
 	for {
-		makespan()
+		createTrace()
 	}
 
 	fmt.Printf("Finishing at: %v\n", time.Now().Unix())
-	defer tracer.Stop()
 }
