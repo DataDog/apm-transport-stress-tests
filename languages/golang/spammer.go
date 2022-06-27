@@ -15,7 +15,7 @@ func main() {
 	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
 	defer tracer.Stop()
-	statsdClient, err := statsd.New("127.0.0.1:8125")
+	statsdClient, err := statsd.New("observer:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
