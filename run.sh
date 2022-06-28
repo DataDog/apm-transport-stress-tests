@@ -98,16 +98,16 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 elif [[ "$TRANSPORT" == "uds" ]]; then
 
 	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
-		echo UDS is not supported on Windows yet
+		echo "UDS is not supported on Windows yet"
 		exit 1
 	fi
 
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
 	export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
-	export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
+	# export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 
-	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} and DSD on ${DD_DOGSTATSD_SOCKET}
+	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} # and DSD on ${DD_DOGSTATSD_SOCKET}
 
 	unset DD_AGENT_HOST
 	unset DD_HOSTNAME
