@@ -53,6 +53,7 @@ echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPO
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
     export DD_LOG_LEVEL="debug"
+	echo "DEBUG MODE IS ENABLED"
 else
     export DD_TRACE_DEBUG="0"
     export DD_LOG_LEVEL="info"
@@ -159,18 +160,20 @@ sleep 5
 
 # SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
-echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
+echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
-for value in golang nodejs java ruby php
+for unimplemented in golang nodejs java ruby
 do
-    echo "This language has not yet implemented graceful SIGINT"
-    exit 0
+	if [[ "$TRACER" == "$unimplemented" ]]; then
+		echo "This language has not yet implemented graceful SIGINT"
+		exit 0
+	fi
 done
 
 # This language has implemented SIGINT

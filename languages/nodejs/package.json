@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dd-trace": "^2.8.0"
+    "dd-trace": "^2.8.0",
+    "hot-shots": "^9.1.0"
   }
 }

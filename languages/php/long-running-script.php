@@ -1,8 +1,12 @@
 <?php
 
+declare(ticks=1);
+
 namespace App;
 
-declare(ticks=1);
+use DataDog\DogStatsd;
+
+require __DIR__ . '/vendor/autoload.php';
 
 \pcntl_signal(
     SIGINT,
@@ -16,8 +20,16 @@ declare(ticks=1);
     }
 );
 
-function root_function()
+$statsd = new DogStatsd(
+    array(
+        'host' => 'observer',
+        'port' => 8125,
+    )
+);
+
+function root_function(DogStatsd $statsd)
 {
+    $statsd->increment('transport_sample.span_created');
     nested_function();
 }
 
@@ -45,5 +57,5 @@ function nested_function()
 );
 
 while (1) {
-    root_function();
+    root_function($statsd);
 }
