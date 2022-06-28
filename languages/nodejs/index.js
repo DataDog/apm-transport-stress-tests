@@ -7,9 +7,9 @@ const StatsD = require('hot-shots');
 const oneMs = setTimeout.bind(null, 1);
 const client = new StatsD({
   host: 'observer',
-  port: 9125,
+  port: 8125,
   globalTags: { env: process.env.NODE_END },
-  bufferFlushInterval: 10, // Default of 1 second piles up too much data
+  bufferFlushInterval: 20, // Default of 1 second piles up too much data
   errorHandler: function (error) {
     console.log('Socket errors caught here:', error);
   }
