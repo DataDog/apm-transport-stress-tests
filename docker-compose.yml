@@ -9,8 +9,8 @@ services:
     container_name: observer
     image: datadog/docker-dd-agent
     links:
-     - mockagent
-     - spammer
+      - mockagent
+      - spammer
     environment:
       - DD_DOGSTATSD_PORT=8125
       - DD_APM_ENABLED=false
@@ -30,7 +30,7 @@ services:
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
     ports:
       - "8125:8125/udp"
-  
+
   mockagent:
     container_name: transport-mockagent
     image: transport-mockagent
@@ -70,7 +70,7 @@ services:
     cpus: 0.5
     # cpu_percent: 10
     # mem_limit: 100m
-        
+
   spammer:
     container_name: transport-spammer
     image: transport-spammer
@@ -95,7 +95,7 @@ services:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
       - mockagent
-      
+
   concurrent-spammer:
     image: transport-spammer
     environment:
@@ -113,4 +113,3 @@ services:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
       - mockagent
-    
