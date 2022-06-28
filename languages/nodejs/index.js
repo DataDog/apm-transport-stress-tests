@@ -4,6 +4,8 @@ const tracer = require('dd-trace').init();
 const { setTimeout } = require('timers/promises');
 const StatsD = require('hot-shots');
 
+let alive = true;
+
 const oneMs = setTimeout.bind(null, 1);
 const client = new StatsD({
   host: 'observer',
@@ -23,11 +25,8 @@ async function spam () {
   await tracer.trace('spam', { resource: 'spammer' }, nestedSpam);
 }
 
-process.on('exit', () => {
-  client.close(function (error) {
-    console.log('Error closing StatsD', error)
-  });
-  console.log('Exiting Node.js spammer');
+process.on('SIGINT', () => {
+  alive = false;
 });
 
 (async () => {
@@ -36,8 +35,14 @@ process.on('exit', () => {
 
   console.log('Starting Node.js spammer.');
 
-  while (true) {
+  while (alive) {
     await spam();
     client.increment('transport_sample.span_created', 2);
   }
+
+  console.log('Received SIGINT. Exiting cleanly.');
+  client.close(function (error) {
+    console.log('Error closing StatsD', error)
+  });
+  console.log('Exiting Node.js spammer');
 })();
