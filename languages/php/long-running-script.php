@@ -2,6 +2,20 @@
 
 namespace App;
 
+declare(ticks=1);
+
+\pcntl_signal(
+    SIGINT,
+    function ($signal) {
+        if ($signal === SIGINT) {
+            echo "Existing due to SIGINT\n";
+            exit(0);
+        } else {
+            echo "Handling signal $signal\n";
+        }
+    }
+);
+
 function root_function()
 {
     nested_function();
