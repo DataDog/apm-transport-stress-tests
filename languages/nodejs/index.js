@@ -10,11 +10,9 @@ const oneMs = setTimeout.bind(null, 1);
 const client = new StatsD({
   host: 'observer',
   port: 8125,
-  globalTags: { env: process.env.NODE_END },
+  globalTags: { env: process.env.NODE_ENV },
   bufferFlushInterval: 20, // Default of 1 second piles up too much data
-  errorHandler: function (error) {
-    console.log('Socket errors caught here:', error);
-  }
+  errorHandler:  () => { /* ignore errors for now */ }
 });
 
 async function nestedSpam () {
@@ -41,8 +39,8 @@ process.on('SIGINT', () => {
   }
 
   console.log('Received SIGINT. Exiting cleanly.');
-  client.close(function (error) {
-    console.log('Error closing StatsD', error)
+  client.close((error) => {
+    if (error) console.log('Error closing StatsD', error)
+    console.log('Exiting Node.js spammer');
   });
-  console.log('Exiting Node.js spammer');
 })();
