@@ -24,7 +24,6 @@ services:
       - DD_SERVICE
       - DD_VERSION
       - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
-      - DD_DOGSTATSD_PORT=9125
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
