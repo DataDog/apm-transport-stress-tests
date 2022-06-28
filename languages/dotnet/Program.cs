@@ -1,4 +1,4 @@
-﻿
+
 using StatsdClient;
 
 Console.WriteLine($"Waiting for ready at {DateTime.Now.Ticks}.");
@@ -6,15 +6,13 @@ Console.WriteLine($"Waiting for ready at {DateTime.Now.Ticks}.");
 Thread.Sleep(10000);
 
 Console.WriteLine($"Starting at {DateTime.Now.Ticks}.");
+
 var dogstatsdConfig = new StatsdConfig
 {
     StatsdServerName = "observer",
     StatsdPort = 8125,
     ConstantTags = new [] { "language:dotnet" },
 };
-
-using var dogStatsdService = new DogStatsdService();
-dogStatsdService.Configure(dogstatsdConfig);
 
 var tcs = new TaskCompletionSource();
 var sigintReceived = false;
@@ -43,18 +41,25 @@ AppDomain.CurrentDomain.ProcessExit += (_, _) =>
     }
 };
 
-while (!tcs.Task.IsCompleted)
+using (var dogStatsdService = new DogStatsdService())
 {
-    using (var s1 = Datadog.Trace.Tracer.Instance.StartActive("spam"))
+    dogStatsdService.Configure(dogstatsdConfig);
+    while (!tcs.Task.IsCompleted)
     {
-        s1.Span.ResourceName = "spammer";
-        dogStatsdService.Increment("transport_sample.span_created");
-        using (var s2 = Datadog.Trace.Tracer.Instance.StartActive("nested-spam"))
+        using (var s1 = Datadog.Trace.Tracer.Instance.StartActive("spam"))
         {
-            // no-op
-            Thread.Sleep(1);
+            s1.Span.ResourceName = "spammer";
+            using (var s2 = Datadog.Trace.Tracer.Instance.StartActive("nested-spam"))
+            {
+                // no-op
+                Thread.Sleep(1);
+            }
         }
+        
+        dogStatsdService.Increment("transport_sample.span_created", value: 2);
     }
+
+    dogStatsdService.Flush();
 }
 
 Console.WriteLine("Executing finalizer code.");
