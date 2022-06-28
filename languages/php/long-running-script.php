@@ -61,6 +61,9 @@ function nested_function(DogStatsd $statsd)
     }
 );
 
+// Waiting for observer to be able to receive metrics, until this will be implemented in `./run.sh` or via health-checks
+\sleep(2);
+
 while (1) {
     root_function($statsd);
     echo "Done\n";
