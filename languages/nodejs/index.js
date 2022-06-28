@@ -7,20 +7,19 @@ const StatsD = require('hot-shots');
 const oneMs = setTimeout.bind(null, 1);
 const client = new StatsD({
   host: 'observer',
-  port: 8125,
+  port: 9125,
   globalTags: { env: process.env.NODE_END },
+  bufferFlushInterval: 10, // Default of 1 second piles up too much data
   errorHandler: function (error) {
     console.log('Socket errors caught here:', error);
   }
 });
 
 async function nestedSpam () {
-  client.increment('transport_sample.span_created');
   return tracer.trace('nested-spam', {}, oneMs);
 }
 
 async function spam () {
-  client.increment('transport_sample.span_created');
   await tracer.trace('spam', { resource: 'spammer' }, nestedSpam);
 }
 
@@ -39,5 +38,6 @@ process.on('exit', () => {
 
   while (true) {
     await spam();
+    client.increment('transport_sample.span_created', 2);
   }
 })();
