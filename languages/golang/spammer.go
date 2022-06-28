@@ -35,11 +35,11 @@ type stressTest struct {
 // Each span creation sends an event to DogStatsD to
 // help with throughput analysis.
 func (st *stressTest) createTrace() {
-	st.statsdClient.SimpleEvent("transport_sample.span_created", "")
+	st.statsdClient.Incr("transport_sample.span_created", nil, 1)
 	span := tracer.StartSpan("spam", tracer.ResourceName("spammer"))
 	defer span.Finish()
 
-	st.statsdClient.SimpleEvent("transport_sample.span_created", "")
+	st.statsdClient.Incr("transport_sample.span_created", nil, 1)
 	childSpan := tracer.StartSpan("nested-spam", tracer.ChildOf(span.Context()))
 	time.Sleep(time.Millisecond)
 	childSpan.Finish()
