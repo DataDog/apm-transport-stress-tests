@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
+	"os/signal"
 	"time"
 
 	"github.com/DataDog/datadog-go/statsd"
@@ -20,10 +22,19 @@ func main() {
 		log.Fatal(err)
 	}
 	stressTest := &stressTest{statsdClient}
+
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt)
 	for {
-		stressTest.createTrace()
+		select {
+		case <-sigs:
+			fmt.Printf("Finishing at: %v\n", time.Now().Unix())
+			statsdClient.Close()
+			os.Exit(0)
+		default:
+			stressTest.createTrace()
+		}
 	}
-	fmt.Printf("Finishing at: %v\n", time.Now().Unix())
 }
 
 type stressTest struct {
