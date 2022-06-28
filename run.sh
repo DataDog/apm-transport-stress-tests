@@ -168,7 +168,7 @@ docker-compose down --remove-orphans
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
-for unimplemented in golang nodejs java ruby
+for unimplemented in golang nodejs java
 do
 	if [[ "$TRACER" == "$unimplemented" ]]; then
 		echo "This language has not yet implemented graceful SIGINT"
