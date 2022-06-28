@@ -24,20 +24,25 @@ $statsd = new DogStatsd(
     array(
         'host' => 'observer',
         'port' => 8125,
+        'global_tags' => [
+            'env' => \getenv('DD_ENV'),
+            'service' => \getenv('DD_SERVICE'),
+            'version' => \getenv('DD_VERSION'),
+        ],
     )
 );
 
 function root_function(DogStatsd $statsd)
 {
     $statsd->increment('transport_sample.span_created');
-    nested_function();
+    nested_function($statsd);
 }
 
-function nested_function()
+function nested_function(DogStatsd $statsd)
 {
+    $statsd->increment('transport_sample.span_created');
     // Sleep 1 ms
     \usleep(1000);
-    echo "Done\n";
 }
 
 \DDTrace\trace_function(
@@ -58,4 +63,5 @@ function nested_function()
 
 while (1) {
     root_function($statsd);
+    echo "Done\n";
 }
