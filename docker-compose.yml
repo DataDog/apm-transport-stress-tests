@@ -21,6 +21,8 @@ services:
       - DD_ENV
       - DD_API_KEY
       - DD_TAGS
+      - DD_SERVICE
+      - DD_VERSION
       - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
