@@ -26,6 +26,7 @@ class Spammer
     Datadog::Tracing.trace('spam', resource: 'spammer') do |span|
       metrics.increment('transport_sample.span_created')
       Datadog::Tracing.trace('nested-spam') do
+        span_created(2)
         sleep(0.001)
       end
     end
@@ -34,6 +35,10 @@ class Spammer
   def print_diagnostics!
     puts "Tracing:\n- Enabled: #{Datadog.configuration.tracing.enabled}"
     puts "Metrics:\n- Supported: #{metrics.supported?}\n- Enabled: #{metrics.enabled?}"
+  end
+
+  def span_created(count = 1)
+    metrics.count('transport_sample.span_created', count)
   end
 end
 
