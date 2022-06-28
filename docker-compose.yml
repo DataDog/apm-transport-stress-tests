@@ -6,6 +6,7 @@ version: "2.4"
 services:
 
   observer:
+    container_name: observer
     image: datadog/docker-dd-agent
     links:
      - mockagent
