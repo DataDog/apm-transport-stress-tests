@@ -95,7 +95,6 @@ jobs:
 
     - name: Run TCPIP
       run: ./run.sh tcpip
-      continue-on-error: true
       env:
         DEBUG_MODE: false
         RUN_ID: ${{ github.run_id }}
@@ -105,14 +104,16 @@ jobs:
         TRANSPORT_STRESS_TIMEOUT_MS: 180000
 
     - name: TCPIP Spammer Logs
+      if: always()
       run: ./show-logs.sh tcpip ${{ matrix.library }} spammer
 
     - name: TCPIP Agent Logs
+      if: always()
       run: ./show-logs.sh tcpip ${{ matrix.library }} mockagent
 
     - name: Run UDS
+      if: always()
       run: ./run.sh uds
-      continue-on-error: true
       env:
         DEBUG_MODE: false
         RUN_ID: ${{ github.run_id }}
@@ -122,12 +123,15 @@ jobs:
         TRANSPORT_STRESS_TIMEOUT_MS: 180000
 
     - name: UDS Spammer Logs
+      if: always()
       run: ./show-logs.sh uds ${{ matrix.library }} spammer
 
     - name: UDS Agent Logs
+      if: always()
       run: ./show-logs.sh uds ${{ matrix.library }} mockagent
 
     - name: Upload artifact
+      if: always()
       uses: actions/upload-artifact@v3
       with:
         name: results_${{ matrix.library }}_${{ matrix.agent }}
