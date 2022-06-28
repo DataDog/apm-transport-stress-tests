@@ -8,8 +8,8 @@ services:
   observer:
     image: datadog/docker-dd-agent
     links:
-     - mockagent
-     - spammer
+      - mockagent
+      - spammer
     environment:
       - DD_APM_ENABLED=false
       - DD_LOGS_ENABLED=true
@@ -17,14 +17,14 @@ services:
       - DD_CONTAINER_EXCLUDE="name:.*concurrent-spammer.*"
       - DD_LOG_LEVEL
       - DD_ENV
-      - DD_API_KEY
+      - DD_API_KEY=$DD_API_KEY
       - DD_TAGS
       - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
-  
+
   mockagent:
     container_name: transport-mockagent
     image: transport-mockagent
@@ -64,7 +64,7 @@ services:
     cpus: 0.5
     # cpu_percent: 10
     # mem_limit: 100m
-        
+
   spammer:
     container_name: transport-spammer
     image: transport-spammer
@@ -88,7 +88,7 @@ services:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
       - mockagent
-      
+
   concurrent-spammer:
     image: transport-spammer
     environment:
@@ -106,4 +106,3 @@ services:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
       - mockagent
-    

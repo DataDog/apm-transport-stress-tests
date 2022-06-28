@@ -1,0 +1,3 @@
+vendor/
+# In this specific case we ignore composer.lock as (1) we always rebuild and (2) we always want the newest versions.
+composer.lock

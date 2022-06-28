@@ -167,7 +167,7 @@ export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
 
-for value in golang nodejs java python ruby php
+for value in golang nodejs java python ruby
 do
     echo "This language has not yet implemented graceful SIGINT"
     exit 0
