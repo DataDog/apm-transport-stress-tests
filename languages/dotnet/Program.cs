@@ -1,17 +1,18 @@
-﻿
-using StatsdClient;
 
-var dogstatsdConfig = new StatsdConfig
-{
-    StatsdServerName = "observer",
-    StatsdPort = 8125,
-};
+using StatsdClient;
 
 Console.WriteLine($"Waiting for ready at {DateTime.Now.Ticks}.");
 
 Thread.Sleep(10000);
 
 Console.WriteLine($"Starting at {DateTime.Now.Ticks}.");
+
+var dogstatsdConfig = new StatsdConfig
+{
+    StatsdServerName = "observer",
+    StatsdPort = 8125,
+    ConstantTags = new [] { "language:dotnet" },
+};
 
 var tcs = new TaskCompletionSource();
 var sigintReceived = false;
@@ -54,8 +55,8 @@ using (var dogStatsdService = new DogStatsdService())
                 Thread.Sleep(1);
             }
         }
-
-        dogStatsdService.Increment("transport_sample.span_created", 2, sampleRate: 1.0);
+        
+        dogStatsdService.Increment("transport_sample.span_created", value: 2);
     }
 
     dogStatsdService.Flush();
