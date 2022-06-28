@@ -16,7 +16,7 @@ Console.CancelKeyPress += (_, ea) =>
     Console.WriteLine("Received SIGINT (Ctrl+C), this is good.");
     tcs.SetResult();
     sigintReceived = true;
-    Environment.ExitCode = 5;
+    Environment.ExitCode = 0;
 };
 
 AppDomain.CurrentDomain.ProcessExit += (_, _) =>
