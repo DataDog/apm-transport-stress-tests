@@ -17,7 +17,7 @@ services:
       - DD_CONTAINER_EXCLUDE="name:.*concurrent-spammer.*"
       - DD_LOG_LEVEL
       - DD_ENV
-      - DD_API_KEY=$DD_API_KEY
+      - DD_API_KEY
       - DD_TAGS
       - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
     volumes:
