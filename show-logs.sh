@@ -17,7 +17,9 @@ container_log="${LOGS_FOLDER}/${CONTAINER}-stdout.log"
 cat $container_log
 
 if [[ "$LANGUAGE" == "dotnet" ]]; then
-    echo "=================== Exporting extra log file for dotnet ==================="
-    tracer_log_folder="${LOGS_FOLDER}/tracer/dotnet"
-	for file in $tracer_log_folder/*.log; do echo $file; cat $file; echo; done
+    if [[ "$CONTAINER" == "spammer" ]]; then
+        echo "=================== Exporting extra log file for dotnet ==================="
+        tracer_log_folder="${LOGS_FOLDER}/tracer/dotnet"
+        for file in $tracer_log_folder/*.log; do echo $file; cat $file; echo; done
+    fi
 fi

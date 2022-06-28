@@ -53,6 +53,7 @@ echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPO
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
     export DD_LOG_LEVEL="debug"
+	echo "DEBUG MODE IS ENABLED"
 else
     export DD_TRACE_DEBUG="0"
     export DD_LOG_LEVEL="info"
@@ -148,16 +149,32 @@ export SPAMMER_CONTAINER_ID=$(docker inspect --format="{{.Id}}" transport-spamme
 
 echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 
-# echo "Starting observer"
-# ./observe.sh start
-
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
-# echo "Stopping observer"
-# ./observe.sh stop
+# Signal for graceful exit if the sample supports it
+docker kill --signal SIGINT transport-spammer
+
+echo "Wait 5 seconds for shutdown handling"
+sleep 5
+
+# SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
+EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
+
+echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
+
+for unimplemented in golang nodejs java python ruby
+do
+	if [[ "$TRACER" == "$unimplemented" ]]; then
+		echo "This language has not yet implemented graceful SIGINT"
+		exit 0
+	fi
+done
+
+# This language has implemented SIGINT
+exit $EXIT_CODE
