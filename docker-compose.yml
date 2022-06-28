@@ -6,11 +6,13 @@ version: "2.4"
 services:
 
   observer:
+    container_name: observer
     image: datadog/docker-dd-agent
     links:
      - mockagent
      - spammer
     environment:
+      - DD_DOGSTATSD_PORT=8125
       - DD_APM_ENABLED=false
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
@@ -24,6 +26,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+    ports:
+      - "8125:8125/udp"
   
   mockagent:
     container_name: transport-mockagent
@@ -80,6 +84,7 @@ services:
       - DD_VERSION
       - DD_LOG_LEVEL
       - DD_ENV
+      - DD_API_KEY
       # - DD_TAGS
       - DD_TRACE_GLOBAL_TAGS
       # - DD_TRACE_SAMPLE_RATE=1
