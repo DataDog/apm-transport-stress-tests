@@ -8,7 +8,7 @@ class Spammer
 
   def initialize
     # Setup metrics
-    @metrics = Datadog::Statsd.new('observer', 9125)
+    @metrics = Datadog::Statsd.new('observer', 9125, tags: ["env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}"])
     @results = {}
   end
 
@@ -23,6 +23,10 @@ class Spammer
     end
 
     results
+  end
+
+  def close!
+    metrics.close
   end
 
   def generate_trace!
@@ -87,6 +91,7 @@ begin
   spammer.print_results!
 rescue Interrupt
   puts "[#{Time.now.utc}] Spammer gracefully stopping..."
+  spammer.close!
   spammer.print_results!
 ensure
   puts "[#{Time.now.utc}] Spammer exit."
