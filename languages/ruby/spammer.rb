@@ -8,7 +8,7 @@ class Spammer
 
   def initialize
     # Setup metrics
-    @metrics = Datadog::Statsd.new('observer', 9125, tags: ["env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}"])
+    @metrics = Datadog::Statsd.new('observer', 9125, tags: ["env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}","language:ruby"])
     @results = {}
   end
 
