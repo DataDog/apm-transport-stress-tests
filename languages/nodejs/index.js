@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const tracer = require('dd-trace').init();
-const { setTimeout } = require('timers/promises');
 const StatsD = require('hot-shots');
+const tracer = require('dd-trace');
+const { setTimeout } = require('timers/promises');
 
 let alive = true;
 
@@ -30,6 +30,7 @@ process.on('SIGINT', () => {
 (async () => {
   console.log('Waiting 10 seconds for agent to be ready');
   await setTimeout(10000);
+  tracer.init();
 
   console.log('Starting Node.js spammer.');
 
