@@ -25,4 +25,5 @@ docker build \
     --progress=plain \
     -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
+    --no-cache \
     ./languages/${LANGUAGE}
