@@ -8,7 +8,7 @@ class Spammer
 
   def initialize
     # Setup metrics
-    @metrics = Datadog::Core::Metrics::Client.new
+    @metrics = Datadog::Statsd.new('observer', 9125)
     @results = {}
   end
 
@@ -42,9 +42,10 @@ class Spammer
     puts "--------------"
     puts "Tracing:"
     puts "- Enabled:   #{Datadog.configuration.tracing.enabled}"
-    puts "Metrics:"
-    puts "- Supported: #{metrics.supported?}"
-    puts "- Enabled:   #{metrics.enabled?}"
+    # These properties don't exist?  -Colin
+    # puts "Metrics:"
+    # puts "- Supported: #{metrics.supported?}"
+    # puts "- Enabled:   #{metrics.enabled?}"
     puts "--------------"
   end
 

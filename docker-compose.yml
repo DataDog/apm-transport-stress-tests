@@ -12,7 +12,7 @@ services:
       - mockagent
       - spammer
     environment:
-      - DD_DOGSTATSD_PORT=8125
+      - DD_DOGSTATSD_PORT=9125
       - DD_APM_ENABLED=false
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
@@ -30,7 +30,7 @@ services:
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
     ports:
-      - "8125:8125/udp"
+      - "9125:9125/udp"
 
   mockagent:
     container_name: transport-mockagent

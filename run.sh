@@ -127,6 +127,17 @@ echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
+for noracestart in ruby
+do
+	if [[ "$TRACER" == "$noracestart" ]]; then
+	    # We need to start the mockagent ahead of time for this language
+        docker-compose up -d mockagent
+		echo "[LANGUAGE-EXCEPTION] This language fails with a race condition looking for the socket in UDS"
+		sleep 5
+		break
+	fi
+done
+
 echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
 docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}
 
