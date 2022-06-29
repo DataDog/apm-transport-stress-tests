@@ -16,7 +16,7 @@ const client = new StatsD({
 });
 
 async function nestedSpam () {
-  return tracer.trace('nested-spam', {}, oneMs);
+  return await tracer.trace('nested-spam', {}, oneMs);
 }
 
 async function spam () {
