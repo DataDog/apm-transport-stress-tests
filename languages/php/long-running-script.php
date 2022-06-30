@@ -8,34 +8,42 @@ use DataDog\DogStatsd;
 
 require __DIR__ . '/vendor/autoload.php';
 
-\pcntl_signal(
-    SIGINT,
-    function ($signal) {
-        if ($signal === SIGINT) {
-            echo "Existing due to SIGINT\n";
-            exit(0);
-        } else {
-            echo "Handling signal $signal\n";
-        }
-    }
-);
+$sigint_received = 0;
+$spans_created = 0;
 
 $statsd = new DogStatsd(
     array(
         'host' => 'observer',
         'port' => 8125,
         'global_tags' => [
+            'language' => 'php',
             'env' => \getenv('DD_ENV'),
             'service' => \getenv('DD_SERVICE'),
             'version' => \getenv('DD_VERSION'),
+            'conc' => \getenv('CONCURRENT_SPAMMERS'),
+            'transport' => \getenv('TRANSPORT'),
+            'trunid' => \getenv('TRANSPORT_RUN_ID'),
         ],
     )
+);
+
+\pcntl_signal(
+    SIGINT,
+    function ($signal) {
+        if ($signal === SIGINT) {
+            $GLOBALS["sigint_received"] = 1;
+            echo "SIGINT received\n";
+        } else {
+            echo "Handling signal $signal\n";
+        }
+    }
 );
 
 function root_function(DogStatsd $statsd)
 {
     $statsd->increment('transport_sample.span_created');
     nested_function($statsd);
+    $GLOBALS["spans_created"] = $GLOBALS["spans_created"] + 2;
 }
 
 function nested_function(DogStatsd $statsd)
@@ -62,9 +70,20 @@ function nested_function(DogStatsd $statsd)
 );
 
 // Waiting for observer to be able to receive metrics, until this will be implemented in `./run.sh` or via health-checks
-\sleep(2);
+\sleep(10);
 
-while (1) {
+$statsd->increment('transport_sample.run');
+
+while ($GLOBALS["sigint_received"] != 1) {
     root_function($statsd);
-    echo "Done\n";
 }
+
+echo "Total span count $spans_created\n";
+echo "Exiting due to SIGINT\n";
+$statsd->increment('transport_sample.end');
+echo "Incremented end metric\n";
+$statsd->increment('transport_sample.span_logged', $value = $spans_created);
+echo "Incremented span count metric\n";
+echo "Finished flushing metrics\n";
+
+exit(0);
