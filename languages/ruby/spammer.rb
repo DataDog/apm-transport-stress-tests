@@ -8,11 +8,14 @@ class Spammer
 
   def initialize
     # Setup metrics
-    @metrics = Datadog::Statsd.new('observer', 9125, tags: ["env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}","language:ruby"])
+    @metrics = Datadog::Statsd.new('observer', 8125, tags: ["env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}","language:ruby"])
     @results = {}
   end
 
   def run!
+
+    metrics.count('transport_sample.run', 1)
+
     results[:traces_generated] = 0
     results[:spans_generated] = 0
 
@@ -62,6 +65,12 @@ class Spammer
     puts "--------------"
   end
 
+  def send_final_metrics!
+    metrics.count('transport_sample.span_logged', results[:spans_generated])
+    metrics.count('transport_sample.end', 1)
+    puts "Final metrics sent."
+  end
+
   private
 
   def trace_created(count = 1)
@@ -91,8 +100,9 @@ begin
   spammer.print_results!
 rescue Interrupt
   puts "[#{Time.now.utc}] Spammer gracefully stopping..."
-  spammer.close!
   spammer.print_results!
+  spammer.send_final_metrics!
+  spammer.close!
 ensure
   puts "[#{Time.now.utc}] Spammer exit."
 end

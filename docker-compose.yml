@@ -12,7 +12,7 @@ services:
       - mockagent
       - spammer
     environment:
-      - DD_DOGSTATSD_PORT=9125
+      - DD_DOGSTATSD_PORT=8125
       - DD_APM_ENABLED=false
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
@@ -24,13 +24,13 @@ services:
       - DD_TAGS
       - DD_SERVICE
       - DD_VERSION
-      - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
+      - DD_HOSTNAME=observer${HOST_POSTFIX}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
       - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
     ports:
-      - "9125:9125/udp"
+      - "8125:8125/udp"
 
   mockagent:
     container_name: transport-mockagent
@@ -55,7 +55,7 @@ services:
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_HEALTH_PORT=5555
-      - DD_HOSTNAME=mockagent${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
+      - DD_HOSTNAME=mockagent${HOST_POSTFIX}
       - DD_PROCESS_AGENT_ENABLED=false
       - DD_LOGS_ENABLED=false
     volumes:
@@ -91,6 +91,7 @@ services:
       # - DD_TAGS
       - DD_TRACE_GLOBAL_TAGS
       # - DD_TRACE_SAMPLE_RATE=1
+      - DD_HOSTNAME=spammer${HOST_POSTFIX}
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog

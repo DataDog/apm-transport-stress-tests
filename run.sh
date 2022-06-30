@@ -13,12 +13,12 @@ export TRANSPORT_STRESS_TIMEOUT_MS=${TRANSPORT_STRESS_TIMEOUT_MS:=60000}
 export DD_TEST_STALL_REQUEST_SECONDS=${DD_TEST_STALL_REQUEST_SECONDS:=4}
 export CONCURRENT_SPAMMERS=${CONCURRENT_SPAMMERS:=DEFAULT}
 export TRACER=${TRACER:=unknown}
-export RUN_ID=${RUN_ID:=unset}
+export TRANSPORT_RUN_ID=${TRANSPORT_RUN_ID:=DEFAULT}
 
-echo "Run id is set to ${RUN_ID}"
+echo "Run id is set to ${TRANSPORT_RUN_ID}"
 
-if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
-    export RUN_ID=$(date +%s)
+if [[ "${TRANSPORT_RUN_ID}" == "DEFAULT" ]]; then
+    export TRANSPORT_RUN_ID=$(date +%s)
 fi
 
 if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
@@ -48,7 +48,7 @@ GLOBAL_TAGS_FILLER=${GLOBAL_TAGS_FILLER::-2}
 export DD_TRACE_GLOBAL_TAGS=$GLOBAL_TAGS_FILLER
 
 
-echo "Running for profile: run_id ${RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
+echo "Running for profile: TRANSPORT_RUN_ID ${TRANSPORT_RUN_ID}, tracer $TRACER, transport ${TRANSPORT}, timeout ${TRANSPORT_STRESS_TIMEOUT_MS}, concurrency ${CONCURRENT_SPAMMERS}"
 
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
@@ -72,7 +72,8 @@ OS_UNAME=$(uname -s)
 
 echo OS: $OS_UNAME
 
-export DD_TAGS="transport_stress_run_id:conc${CONCURRENT_SPAMMERS}_run${RUN_ID}"
+export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
+export DD_TAGS="transport_stress_run_id:${TRANSPORT_STRESS_RUN_TAG}"
 
 echo "Sending DD_TAGS $DD_TAGS"
 
@@ -88,7 +89,6 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
 		export DD_HOSTNAME=host.docker.internal
 		echo Operating on a windows host with host.docker.internal
 	else
-		#export DD_AGENT_HOST=127.0.0.1
 		export DD_AGENT_HOST=mockagent
 		export DD_HOSTNAME=mockagent
 		echo Operating on a non-windows host with localhost
@@ -105,9 +105,8 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
 	export DD_SERVICE="${TRACER}"
 	export DD_VERSION="uds"
 	export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
-	# export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 
-	echo Binding APM on ${DD_APM_RECEIVER_SOCKET} # and DSD on ${DD_DOGSTATSD_SOCKET}
+	echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
 
 	unset DD_AGENT_HOST
 	unset DD_HOSTNAME
@@ -120,6 +119,8 @@ fi
 rm -rf $OUTPUT_FOLDER
 mkdir -p $OUTPUT_FOLDER
 mkdir -p $LOGS_FOLDER
+
+export HOST_POSTFIX=${TRANSPORT_RUN_ID}-${TRACER}-${TRANSPORT}-conc${CONCURRENT_SPAMMERS}
 
 echo ============ Run $TRANSPORT tests ===================
 echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
@@ -163,11 +164,26 @@ echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
-# Signal for graceful exit if the sample supports it
-docker kill --signal SIGINT transport-spammer
+containers=$(docker ps | awk '{if(NR>1) print $NF}')
 
-echo "Wait 5 seconds for shutdown handling"
-sleep 5
+# loop through all containers
+for container in $containers
+do
+	if [[ $container == *"spammer"* ]]; then	
+		echo ================================	
+		echo "Sending SIGINT to container: $container"
+		# Signal for graceful exit if the sample supports it
+		docker kill --signal SIGINT $container
+	fi
+done
+
+echo ================================
+
+echo "Wait 15 seconds for shutdown handling and stats flushing"
+sleep 15
+
+echo "Displaying containers"
+docker ps
 
 # SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
