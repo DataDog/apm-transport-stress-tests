@@ -17,13 +17,15 @@ services:
       - DD_LOGS_ENABLED=true
       - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
       - DD_CONTAINER_EXCLUDE="name:.*concurrent-spammer.*"
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
       - DD_LOG_LEVEL
       - DD_ENV
       - DD_API_KEY
       - DD_TAGS
       - DD_SERVICE
       - DD_VERSION
-      - DD_HOSTNAME=observer${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
+      - DD_HOSTNAME=observer${HOST_POSTFIX}
+      - DD_CONTAINER_LABELS_AS_TAGS='{"trunid":"conc":"service":"version"}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -39,6 +41,11 @@ services:
     #   interval: 1s
     #   start_period: 10s
     #   retries: 30
+    labels:
+        - "conc=${CONCURRENT_SPAMMERS}"
+        - "trunid=${TRANSPORT_RUN_ID}"
+        - "service=${DD_SERVICE}"
+        - "version=${DD_VERSION}"
     environment:
       - DD_APM_RECEIVER_PORT
       - DD_DOGSTATSD_PORT
@@ -54,7 +61,7 @@ services:
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
       - DD_HEALTH_PORT=5555
-      - DD_HOSTNAME=mockagent${TRACER}${TRANSPORT}conc${CONCURRENT_SPAMMERS}
+      - DD_HOSTNAME=mockagent${HOST_POSTFIX}
       - DD_PROCESS_AGENT_ENABLED=false
       - DD_LOGS_ENABLED=false
     volumes:
@@ -74,6 +81,11 @@ services:
   spammer:
     container_name: transport-spammer
     image: transport-spammer
+    labels:
+        - "conc=${CONCURRENT_SPAMMERS}"
+        - "trunid=${TRANSPORT_RUN_ID}"
+        - "service=${DD_SERVICE}"
+        - "version=${DD_VERSION}"
     environment:
       - DD_AGENT_HOST
       - DD_APM_RECEIVER_PORT
@@ -90,6 +102,9 @@ services:
       # - DD_TAGS
       - DD_TRACE_GLOBAL_TAGS
       # - DD_TRACE_SAMPLE_RATE=1
+      - DD_HOSTNAME=spammer${HOST_POSTFIX}
+      - CONCURRENT_SPAMMERS
+      - TRANSPORT_RUN_ID
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
@@ -109,6 +124,8 @@ services:
       - DD_VERSION
       - DD_ENV
       - DD_TRACE_GLOBAL_TAGS
+      - CONCURRENT_SPAMMERS
+      - TRANSPORT_RUN_ID
     volumes:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
