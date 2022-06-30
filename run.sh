@@ -115,7 +115,7 @@ rm -rf $OUTPUT_FOLDER
 mkdir -p $OUTPUT_FOLDER
 mkdir -p $LOGS_FOLDER
 
-export HOST_POSTFIX=${TRANSPORT_RUN_ID}-${TRACER}-${TRANSPORT}-conc${CONCURRENT_SPAMMERS}
+export HOST_POSTFIX=${TRANSPORT_RUN_ID}-${TRACER}-conc${CONCURRENT_SPAMMERS}
 
 echo ============ Run $TRANSPORT tests ===================
 echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
