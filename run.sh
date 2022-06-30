@@ -33,7 +33,7 @@ TAG_VALUE=""
 
 for ((i=TAG_LENGTH; i>=1; i--))
 do
-	TAG_VALUE+="A"
+    TAG_VALUE+="A"
 done
 
 echo "Using global tags filler [$TAG_COUNT] with a value length of ${TAG_LENGTH}"
@@ -53,7 +53,7 @@ echo "Running for profile: TRANSPORT_RUN_ID ${TRANSPORT_RUN_ID}, tracer $TRACER,
 if [[ "${DEBUG_MODE:='false'}" == "true" ]]; then
     export DD_TRACE_DEBUG="1"
     export DD_LOG_LEVEL="debug"
-	echo "DEBUG MODE IS ENABLED"
+    echo "DEBUG MODE IS ENABLED"
 else
     export DD_TRACE_DEBUG="0"
     export DD_LOG_LEVEL="info"
@@ -81,38 +81,38 @@ if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=6126
     export DD_APM_RECEIVER_PORT=6126
     export DD_DOGSTATSD_PORT=6125
-	export DD_SERVICE="${TRACER}"
-	export DD_VERSION="tcpip"
+    export DD_SERVICE="${TRACER}"
+    export DD_VERSION="tcpip"
 
-	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
-		export DD_AGENT_HOST=host.docker.internal
-		export DD_HOSTNAME=host.docker.internal
-		echo Operating on a windows host with host.docker.internal
-	else
-		export DD_AGENT_HOST=mockagent
-		export DD_HOSTNAME=mockagent
-		echo Operating on a non-windows host with localhost
-	fi
+    if [[ "$OS_UNAME" = *"MINGW"* ]]; then
+        export DD_AGENT_HOST=host.docker.internal
+        export DD_HOSTNAME=host.docker.internal
+        echo Operating on a windows host with host.docker.internal
+    else
+        export DD_AGENT_HOST=mockagent
+        export DD_HOSTNAME=mockagent
+        echo Operating on a non-windows host with localhost
+    fi
 
-	echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT} against ${DD_AGENT_HOST}
+    echo Binding TCP on port ${DD_TRACE_AGENT_PORT} and UDP on port ${DD_DOGSTATSD_PORT} against ${DD_AGENT_HOST}
 elif [[ "$TRANSPORT" == "uds" ]]; then
 
-	if [[ "$OS_UNAME" = *"MINGW"* ]]; then
-		echo "UDS is not supported on Windows yet"
-		exit 1
-	fi
+    if [[ "$OS_UNAME" = *"MINGW"* ]]; then
+        echo "UDS is not supported on Windows yet"
+        exit 1
+    fi
 
-	export DD_SERVICE="${TRACER}"
-	export DD_VERSION="uds"
-	export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+    export DD_SERVICE="${TRACER}"
+    export DD_VERSION="uds"
+    export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
 
-	echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
+    echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
 
-	unset DD_AGENT_HOST
-	unset DD_HOSTNAME
-	unset DD_TRACE_AGENT_PORT
-	unset DD_APM_RECEIVER_PORT
-	unset DD_DOGSTATSD_PORT
+    unset DD_AGENT_HOST
+    unset DD_HOSTNAME
+    unset DD_TRACE_AGENT_PORT
+    unset DD_APM_RECEIVER_PORT
+    unset DD_DOGSTATSD_PORT
 fi
 
 # Clean logs/ folder
@@ -130,13 +130,13 @@ docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 for noracestart in ruby
 do
-	if [[ "$TRACER" == "$noracestart" ]]; then
-	    # We need to start the mockagent ahead of time for this language
+    if [[ "$TRACER" == "$noracestart" ]]; then
+        # We need to start the mockagent ahead of time for this language
         docker-compose up -d mockagent
-		echo "[LANGUAGE-EXCEPTION] This language fails with a race condition looking for the socket in UDS"
-		sleep 5
-		break
-	fi
+        echo "[LANGUAGE-EXCEPTION] This language fails with a race condition looking for the socket in UDS"
+        sleep 5
+        break
+    fi
 done
 
 echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
@@ -152,7 +152,7 @@ containers=("mockagent" "spammer" "observer")
 for container in ${containers[@]}
 do
     container_log="${LOGS_FOLDER}/${container}-stdout.log"
-	echo Inspecting container logs ${container}, saving to ${container_log}
+    echo Inspecting container logs ${container}, saving to ${container_log}
     docker-compose logs --no-color --no-log-prefix -f $container > $container_log &
 done
 
@@ -169,12 +169,12 @@ containers=$(docker ps | awk '{if(NR>1) print $NF}')
 # loop through all containers
 for container in $containers
 do
-	if [[ $container == *"spammer"* ]]; then	
-		echo ================================	
-		echo "Sending SIGINT to container: $container"
-		# Signal for graceful exit if the sample supports it
-		docker kill --signal SIGINT $container
-	fi
+    if [[ $container == *"spammer"* ]]; then    
+        echo ================================    
+        echo "Sending SIGINT to container: $container"
+        # Signal for graceful exit if the sample supports it
+        docker kill --signal SIGINT $container
+    fi
 done
 
 echo ================================
@@ -197,10 +197,10 @@ echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
 for unimplemented in nodejs java
 do
-	if [[ "$TRACER" == "$unimplemented" ]]; then
-		echo "This language has not yet implemented graceful SIGINT"
-		exit 0
-	fi
+    if [[ "$TRACER" == "$unimplemented" ]]; then
+        echo "This language has not yet implemented graceful SIGINT"
+        exit 0
+    fi
 done
 
 # This language has implemented SIGINT
