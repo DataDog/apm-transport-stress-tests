@@ -4,6 +4,12 @@ const StatsD = require('hot-shots');
 const tracer = require('dd-trace');
 const { setTimeout } = require('timers/promises');
 
+const sleepArr = new Int32Array(new SharedArrayBuffer(4))
+function sleep (ms) {
+  Atomics.wait(sleepArr, 0, 0, ms)
+}
+const log = process._rawDebug
+
 let alive = true;
 
 const oneMs = setTimeout.bind(null, 1);
@@ -15,33 +21,35 @@ const client = new StatsD({
   errorHandler:  () => { /* ignore errors for now */ }
 });
 
-async function nestedSpam () {
-  return await tracer.trace('nested-spam', {}, oneMs);
+function nestedSpam () {
+  return tracer.trace('nested-spam', {}, () => sleep(1000));
 }
 
-async function spam () {
-  await tracer.trace('spam', { resource: 'spammer' }, nestedSpam);
+function spam () {
+  tracer.trace('spam', { resource: 'spammer' }, nestedSpam);
 }
 
 process.on('SIGINT', () => {
   alive = false;
 });
 
-(async () => {
-  console.log('Waiting 10 seconds for agent to be ready');
-  await setTimeout(10000);
-  tracer.init();
+log('Waiting 10 seconds for agent to be ready');
+sleep(10000);
+tracer.init();
 
-  console.log('Starting Node.js spammer.');
+log('Starting Node.js spammer.');
 
-  while (alive) {
-    await spam();
+function loop () {
+  if (alive) {
+    spam();
     client.increment('transport_sample.span_created', 2);
+    setImmediate(loop);
+  } else {
+    log('Received SIGINT. Exiting cleanly.');
+    client.close((error) => {
+      if (error) log('Error closing StatsD', error)
+      log('Exiting Node.js spammer');
+    });
   }
-
-  console.log('Received SIGINT. Exiting cleanly.');
-  client.close((error) => {
-    if (error) console.log('Error closing StatsD', error)
-    console.log('Exiting Node.js spammer');
-  });
-})();
+}
+loop();
