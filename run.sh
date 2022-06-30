@@ -72,11 +72,6 @@ OS_UNAME=$(uname -s)
 
 echo OS: $OS_UNAME
 
-export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
-export DD_TAGS="transport_stress_run_id:${TRANSPORT_STRESS_RUN_TAG}"
-
-echo "Sending DD_TAGS $DD_TAGS"
-
 if [[ "$TRANSPORT" == "tcpip" ]]; then
     export DD_TRACE_AGENT_PORT=6126
     export DD_APM_RECEIVER_PORT=6126
@@ -138,6 +133,12 @@ do
         break
     fi
 done
+
+export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
+export SHARED_TAGS="conc:${CONCURRENT_SPAMMERS} trunid:${TRANSPORT_RUN_ID} env:${DD_ENV} service:${DD_SERVICE} version:${DD_VERSION} language:${TRACER}"
+export DD_TAGS="${SHARED_TAGS} transport_stress_run_id:${TRANSPORT_STRESS_RUN_TAG}"
+
+echo "Sending DD_TAGS $DD_TAGS"
 
 echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
 docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}

@@ -92,6 +92,8 @@ services:
       - DD_TRACE_GLOBAL_TAGS
       # - DD_TRACE_SAMPLE_RATE=1
       - DD_HOSTNAME=spammer${HOST_POSTFIX}
+      - CONCURRENT_SPAMMERS
+      - TRANSPORT_RUN_ID
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
@@ -111,6 +113,8 @@ services:
       - DD_VERSION
       - DD_ENV
       - DD_TRACE_GLOBAL_TAGS
+      - CONCURRENT_SPAMMERS
+      - TRANSPORT_RUN_ID
     volumes:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:
