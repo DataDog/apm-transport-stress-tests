@@ -8,7 +8,6 @@ services:
       - observer
     environment:
       - BUNDLE_GEMFILE=/app/Gemfile
-      - DD_AGENT_HOST=ddagent
     stdin_open: true
     tty: true
     volumes:

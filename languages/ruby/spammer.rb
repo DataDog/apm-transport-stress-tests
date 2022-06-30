@@ -49,10 +49,7 @@ class Spammer
     puts "--------------"
     puts "Tracing:"
     puts "- Enabled:   #{Datadog.configuration.tracing.enabled}"
-    # These properties don't exist?  -Colin
-    # puts "Metrics:"
-    # puts "- Supported: #{metrics.supported?}"
-    # puts "- Enabled:   #{metrics.enabled?}"
+    puts "- Adapter:   #{Datadog::Tracing.send(:tracer).writer.transport.client.api.adapter.class.name}"
     puts "--------------"
   end
 
@@ -84,13 +81,13 @@ class Spammer
 end
 
 begin
-  # Create a spammer
-  spammer = Spammer.new
-  spammer.print_setup!
-
   # Wait for agent to be ready
   puts "[#{Time.now.utc}] Waiting ten seconds for agent to be ready\n"
   sleep(ENV['DELAY_TIME'] || 10)
+
+  # Create a spammer
+  spammer = Spammer.new
+  spammer.print_setup!
 
   # Begin spamming
   spammer.run!
@@ -100,9 +97,13 @@ begin
   spammer.print_results!
 rescue Interrupt
   puts "[#{Time.now.utc}] Spammer gracefully stopping..."
-  spammer.print_results!
-  spammer.send_final_metrics!
-  spammer.close!
+
+  spammer.print_results! if spammer
 ensure
+  if spammer
+    spammer.send_final_metrics!
+    spammer.close!
+  end
+
   puts "[#{Time.now.utc}] Spammer exit."
 end
