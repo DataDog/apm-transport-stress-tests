@@ -1,0 +1,43 @@
+version: '3.2'
+services:
+  spammer-3.1:
+    build: .
+    platform: linux/x86_64
+    depends_on:
+      - ddagent
+      - observer
+    environment:
+      - BUNDLE_GEMFILE=/app/Gemfile
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./tmp/uds-volume/:/var/run/datadog
+
+  ddagent:
+    image: datadog/agent
+    platform: linux/x86_64
+    environment:
+      - DD_API_KEY
+      - DD_APM_ENABLED=true
+      - DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+      - DD_BIND_HOST=0.0.0.0
+      - DD_LOGS_STDOUT=yes
+      - DD_PROCESS_AGENT_ENABLED=false
+      - LOG_LEVEL=DEBUG
+    expose:
+      - "9126"
+    volumes:
+      - ./tmp/uds-volume/:/var/run/datadog
+
+  observer:
+    image: datadog/agent
+    platform: linux/x86_64
+    environment:
+      - DD_API_KEY
+      - DD_APM_ENABLED=false
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_LOGS_STDOUT=yes
+      - DD_PROCESS_AGENT_ENABLED=false
+      - LOG_LEVEL=DEBUG
+    expose:
+      - "8125/udp"
