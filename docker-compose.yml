@@ -16,6 +16,7 @@ services:
         - "trunid=${TRANSPORT_RUN_ID}"
         - "service=${DD_SERVICE}"
         - "version=${DD_VERSION}"
+        - "transport=${TRANSPORT}"
     environment:
       - DD_DOGSTATSD_PORT=8125
       - DD_APM_ENABLED=false
@@ -30,7 +31,7 @@ services:
       - DD_SERVICE
       - DD_VERSION
       - DD_HOSTNAME=observer${HOST_POSTFIX}
-      - DD_CONTAINER_LABELS_AS_TAGS='{"trunid":"conc":"service":"version"}'
+      - DD_CONTAINER_LABELS_AS_TAGS='{"trunid":"conc":"service":"version":"transport"}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -51,6 +52,7 @@ services:
         - "trunid=${TRANSPORT_RUN_ID}"
         - "service=${DD_SERVICE}"
         - "version=${DD_VERSION}"
+        - "transport=${TRANSPORT}"
     environment:
       - DD_APM_RECEIVER_PORT
       - DD_DOGSTATSD_PORT
@@ -91,6 +93,7 @@ services:
         - "trunid=${TRANSPORT_RUN_ID}"
         - "service=${DD_SERVICE}"
         - "version=${DD_VERSION}"
+        - "transport=${TRANSPORT}"
     environment:
       - DD_AGENT_HOST
       - DD_APM_RECEIVER_PORT
@@ -110,6 +113,7 @@ services:
       - DD_HOSTNAME=spammer${HOST_POSTFIX}
       - CONCURRENT_SPAMMERS
       - TRANSPORT_RUN_ID
+      - TRANSPORT
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
@@ -131,6 +135,7 @@ services:
       - DD_TRACE_GLOBAL_TAGS
       - CONCURRENT_SPAMMERS
       - TRANSPORT_RUN_ID
+      - TRANSPORT
     volumes:
       - ./tmp/uds-volume/:/var/run/datadog
     depends_on:

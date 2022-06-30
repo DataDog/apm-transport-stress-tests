@@ -18,6 +18,7 @@ var dogstatsdConfig = new StatsdConfig
         $"version:{Environment.GetEnvironmentVariable("DD_VERSION")}",
         $"conc:{Environment.GetEnvironmentVariable("CONCURRENT_SPAMMERS")}",
         $"trunid:{Environment.GetEnvironmentVariable("TRANSPORT_RUN_ID")}",
+        $"transport:{Environment.GetEnvironmentVariable("TRANSPORT")}",
     },
 };
 
