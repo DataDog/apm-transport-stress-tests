@@ -25,6 +25,7 @@ services:
       - DD_SERVICE
       - DD_VERSION
       - DD_HOSTNAME=observer${HOST_POSTFIX}
+      - DD_CONTAINER_LABELS_AS_TAGS='{"trunid":"conc":"service":"version"}'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc/:/host/proc/:ro
@@ -40,6 +41,11 @@ services:
     #   interval: 1s
     #   start_period: 10s
     #   retries: 30
+    labels:
+        - "conc=${CONCURRENT_SPAMMERS}"
+        - "trunid=${TRANSPORT_RUN_ID}"
+        - "service=${DD_SERVICE}"
+        - "version=${DD_VERSION}"
     environment:
       - DD_APM_RECEIVER_PORT
       - DD_DOGSTATSD_PORT
@@ -75,6 +81,11 @@ services:
   spammer:
     container_name: transport-spammer
     image: transport-spammer
+    labels:
+        - "conc=${CONCURRENT_SPAMMERS}"
+        - "trunid=${TRANSPORT_RUN_ID}"
+        - "service=${DD_SERVICE}"
+        - "version=${DD_VERSION}"
     environment:
       - DD_AGENT_HOST
       - DD_APM_RECEIVER_PORT
