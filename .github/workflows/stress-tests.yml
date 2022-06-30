@@ -97,7 +97,7 @@ jobs:
       run: ./run.sh tcpip
       env:
         DEBUG_MODE: false
-        RUN_ID: ${{ github.run_id }}
+        TRANSPORT_RUN_ID: ${{ github.run_id }}
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
@@ -116,7 +116,7 @@ jobs:
       run: ./run.sh uds
       env:
         DEBUG_MODE: false
-        RUN_ID: ${{ github.run_id }}
+        TRANSPORT_RUN_ID: ${{ github.run_id }}
         DD_API_KEY: ${{ secrets.DD_API_KEY }}
         CONCURRENT_SPAMMERS: ${{ matrix.concurrent }}
         TRACER: ${{ matrix.library }}
