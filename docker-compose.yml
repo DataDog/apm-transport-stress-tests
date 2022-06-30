@@ -11,6 +11,11 @@ services:
     links:
       - mockagent
       - spammer
+    labels:
+        - "conc=${CONCURRENT_SPAMMERS}"
+        - "trunid=${TRANSPORT_RUN_ID}"
+        - "service=${DD_SERVICE}"
+        - "version=${DD_VERSION}"
     environment:
       - DD_DOGSTATSD_PORT=8125
       - DD_APM_ENABLED=false
