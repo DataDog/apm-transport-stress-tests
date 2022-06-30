@@ -104,13 +104,14 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
     echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
 
     unset DD_AGENT_HOST
-	  unset DD_HOSTNAME
-	  unset DD_TRACE_AGENT_PORT
-	  unset DD_APM_RECEIVER_PORT
-	  unset DD_DOGSTATSD_PORT
+    unset DD_HOSTNAME
+    unset DD_TRACE_AGENT_PORT
+    unset DD_APM_RECEIVER_PORT
+    unset DD_DOGSTATSD_PORT
+
 else
-	  echo "Unknown protocol. Please use \"uds\" or \"tcpip\""
-	  exit 1 
+    echo "Unknown protocol. Please use \"uds\" or \"tcpip\""
+    exit 1
 fi
 
 # Clean logs/ folder
