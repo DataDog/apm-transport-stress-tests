@@ -7,7 +7,6 @@ from ddtrace import config, tracer
 initialize(
     statsd_host="observer",
     statsd_port=8125,
-    statsd_constant_tags=["{}:{}".format(k, v) for k, v in config.tags.items()],
     statsd_constant_tags=[
         "language:python",
         "transport:{}".format(os.environ["TRANSPORT"]),
