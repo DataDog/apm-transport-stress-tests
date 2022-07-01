@@ -17,11 +17,23 @@ func main() {
 	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
 	defer tracer.Stop()
-	statsdClient, err := statsd.New("observer:8125")
+	globalTags := []string{
+		"language:golang",
+		fmt.Sprintf("transport:%s", os.Getenv("TRANSPORT")),
+		fmt.Sprintf("conc:%s", os.Getenv("CONCURRENT_SPAMMERS")),
+		fmt.Sprintf("trunid:%s", os.Getenv("TRANSPORT_RUN_ID")),
+		fmt.Sprintf("env:%s", os.Getenv("DD_ENV")),
+		fmt.Sprintf("service:%s", os.Getenv("DD_SERVICE")),
+		fmt.Sprintf("version:%s", os.Getenv("DD_VERSION")),
+	}
+	statsdClient, err := statsd.New("observer:8125", statsd.WithTags(globalTags))
 	if err != nil {
 		log.Fatal(err)
 	}
 	stressTest := &stressTest{statsdClient}
+
+	statsdClient.Incr("transport_sample.run", nil, 1)
+	spansCreated := 0
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
@@ -29,10 +41,14 @@ func main() {
 		select {
 		case <-sigs:
 			fmt.Printf("Finishing at: %v\n", time.Now().Unix())
+			fmt.Printf("Spans created: %f\n", spansCreated)
+	        statsdClient.Incr("transport_sample.span_logged", nil, float64(spansCreated))
+	        statsdClient.Incr("transport_sample.end", nil, 1)
 			statsdClient.Close()
 			os.Exit(0)
 		default:
 			stressTest.createTrace()
+			spansCreated = spansCreated + 2
 		}
 	}
 }
