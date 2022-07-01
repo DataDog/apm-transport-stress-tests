@@ -4,6 +4,8 @@ import time
 from datadog import initialize, statsd
 from ddtrace import config, tracer
 
+# time.sleep(10)
+
 initialize(
     statsd_host="observer",
     statsd_port=8125,

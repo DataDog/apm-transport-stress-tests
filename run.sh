@@ -127,22 +127,18 @@ echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
 docker inspect transport-spammer > $OUTPUT_FOLDER/image_spammer.json
 docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
-for noracestart in ruby
-do
-    if [[ "$TRACER" == "$noracestart" ]]; then
-        # We need to start the mockagent ahead of time for this language
-        docker-compose up -d mockagent
-        echo "[LANGUAGE-EXCEPTION] This language fails with a race condition looking for the socket in UDS"
-        sleep 5
-        break
-    fi
-done
-
 export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
 export SHARED_TAGS="conc:${CONCURRENT_SPAMMERS} trunid:${TRANSPORT_RUN_ID} env:${DD_ENV} service:${DD_SERVICE} version:${DD_VERSION} language:${TRACER}"
-export DD_TAGS="${SHARED_TAGS} transport_stress_run_id:${TRANSPORT_STRESS_RUN_TAG}"
+export DD_TAGS="${SHARED_TAGS}"
 
 echo "Sending DD_TAGS $DD_TAGS"
+
+# We need to start the mockagent ahead of time for this language
+echo "Starting agent and observer before sample."
+docker-compose up -d mockagent
+docker-compose up -d observer
+echo "Waiting for setup."
+sleep 5
 
 echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
 docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}
