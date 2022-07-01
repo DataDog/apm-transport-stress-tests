@@ -25,8 +25,6 @@ last_created = 0
 
 statsd.increment("transport_sample.run")
 
-statsd.increment("transport_sample.run")
-
 while True:
     try:
         with tracer.trace("spam", resource="spammer"):
