@@ -11,4 +11,4 @@ COPY . ./
 
 RUN npm install dd-trace --save
 
-CMD node ./index.js
+CMD ["node", "./index.js"]

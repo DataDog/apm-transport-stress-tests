@@ -119,7 +119,7 @@ rm -rf $OUTPUT_FOLDER
 mkdir -p $OUTPUT_FOLDER
 mkdir -p $LOGS_FOLDER
 
-export HOST_POSTFIX=${TRANSPORT_RUN_ID}-${TRACER}-conc${CONCURRENT_SPAMMERS}
+export HOST_POSTFIX=${TRANSPORT_RUN_ID}-${TRACER}-${TRANSPORT}-conc${CONCURRENT_SPAMMERS}
 
 echo ============ Run $TRANSPORT tests ===================
 echo "ℹ️  Results and logs outputted to ${OUTPUT_FOLDER}"
@@ -200,7 +200,7 @@ docker-compose down --remove-orphans
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
-for unimplemented in nodejs java
+for unimplemented in java
 do
     if [[ "$TRACER" == "$unimplemented" ]]; then
         echo "This language has not yet implemented graceful SIGINT"
