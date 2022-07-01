@@ -108,6 +108,10 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
     unset DD_TRACE_AGENT_PORT
     unset DD_APM_RECEIVER_PORT
     unset DD_DOGSTATSD_PORT
+
+else
+    echo "Unknown protocol. Please use \"uds\" or \"tcpip\""
+    exit 1
 fi
 
 # Clean logs/ folder
