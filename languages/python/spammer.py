@@ -22,6 +22,8 @@ initialize(
 print("Starting spammer")
 spans_created = 0
 
+statsd.increment("transport_sample.run")
+
 while True:
     try:
         with tracer.trace("spam", resource="spammer"):
@@ -38,5 +40,7 @@ while True:
         break
 
 
+statsd.increment("transport_sample.end")
+statsd.increment("transport_sample.span_logged", spans_created)
 print("Reached limit, exiting")
 print("Created {} spans".format(spans_created))
