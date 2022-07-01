@@ -8,9 +8,6 @@ services:
   observer:
     container_name: observer
     image: datadog/docker-dd-agent
-    links:
-      - mockagent
-      - spammer
     labels:
         - "conc=${CONCURRENT_SPAMMERS}"
         - "trunid=${TRANSPORT_RUN_ID}"
