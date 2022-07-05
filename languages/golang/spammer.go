@@ -33,7 +33,7 @@ func main() {
 	stressTest := &stressTest{statsdClient}
 
 	statsdClient.Incr("transport_sample.run", nil, 1)
-	spansCreated := 0
+	spansCreated := int64(0)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
@@ -42,7 +42,7 @@ func main() {
 		case <-sigs:
 			fmt.Printf("Finishing at: %v\n", time.Now().Unix())
 			fmt.Printf("Spans created: %f\n", spansCreated)
-	        statsdClient.Count("transport_sample.span_logged", float64(spansCreated), nil, 1)
+	        statsdClient.Count("transport_sample.span_logged", spansCreated, nil, 1)
 	        statsdClient.Incr("transport_sample.end", nil, 1)
 			statsdClient.Close()
 			os.Exit(0)
