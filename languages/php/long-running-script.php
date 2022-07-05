@@ -10,6 +10,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 $sigint_received = 0;
 $spans_created = 0;
+$spans_created_previous_track = 0;
 
 $statsd = new DogStatsd(
     array(
@@ -41,14 +42,17 @@ $statsd = new DogStatsd(
 
 function root_function(DogStatsd $statsd)
 {
-    $statsd->increment('transport_sample.span_created');
     nested_function($statsd);
     $GLOBALS["spans_created"] = $GLOBALS["spans_created"] + 2;
+    $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
+    if ($period_span_diff > 199) {
+        $statsd->increment('transport_sample.spans_created', 1.0, null, $period_span_diff);
+        $GLOBALS["spans_created_previous_track"] = $GLOBALS["spans_created"];
+    }
 }
 
 function nested_function(DogStatsd $statsd)
 {
-    $statsd->increment('transport_sample.span_created');
     // Sleep 1 ms
     \usleep(1000);
 }
@@ -77,6 +81,9 @@ $statsd->increment('transport_sample.run');
 while ($GLOBALS["sigint_received"] != 1) {
     root_function($statsd);
 }
+
+$period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
+$statsd->increment('transport_sample.spans_created', 1.0, null, $period_span_diff);
 
 echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
