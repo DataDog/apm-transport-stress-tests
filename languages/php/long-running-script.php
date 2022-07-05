@@ -82,7 +82,7 @@ echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
 $statsd->increment('transport_sample.end');
 echo "Incremented end metric\n";
-$statsd->count('transport_sample.span_logged', $spans_created);
+$statsd->increment('transport_sample.span_logged', 1.0, null, $spans_created);
 echo "Incremented span count metric\n";
 echo "Finished flushing metrics\n";
 
