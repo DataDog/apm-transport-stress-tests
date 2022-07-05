@@ -83,7 +83,7 @@ while ($GLOBALS["sigint_received"] != 1) {
 }
 
 $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
-$statsd->increment('transport_sample.spans_created', 1.0, null, $period_span_diff);
+$statsd->increment('transport_sample.span_created', 1.0, null, $period_span_diff);
 
 echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
@@ -91,6 +91,10 @@ $statsd->increment('transport_sample.end');
 echo "Incremented end metric\n";
 $statsd->increment('transport_sample.span_logged', 1.0, null, $spans_created);
 echo "Incremented span count metric\n";
+
+echo "Waiting 10s for metrics to flush \n";
+\usleep(1000 * 1000 * 10);
+
 echo "Finished flushing metrics\n";
 
 exit(0);
