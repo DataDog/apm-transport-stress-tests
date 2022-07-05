@@ -46,7 +46,7 @@ function root_function(DogStatsd $statsd)
     $GLOBALS["spans_created"] = $GLOBALS["spans_created"] + 2;
     $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
     if ($period_span_diff > 199) {
-        $statsd->increment('transport_sample.spans_created', 1.0, null, $period_span_diff);
+        $statsd->increment('transport_sample.spans_created', $period_span_diff, null, $period_span_diff);
         $GLOBALS["spans_created_previous_track"] = $GLOBALS["spans_created"];
     }
 }
@@ -83,7 +83,7 @@ while ($GLOBALS["sigint_received"] != 1) {
 }
 
 $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
-$statsd->increment('transport_sample.span_created', 1.0, null, $period_span_diff);
+$statsd->increment('transport_sample.span_created', $period_span_diff, null, $period_span_diff);
 
 echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
@@ -92,8 +92,8 @@ echo "Incremented end metric\n";
 $statsd->increment('transport_sample.span_logged', 1.0, null, $spans_created);
 echo "Incremented span count metric\n";
 
-echo "Waiting 10s for metrics to flush \n";
-\usleep(1000 * 1000 * 10);
+echo "Waiting 5s for metrics to flush \n";
+\usleep(1000 * 1000 * 5);
 
 echo "Finished flushing metrics\n";
 
