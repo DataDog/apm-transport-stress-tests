@@ -42,7 +42,7 @@ func main() {
 		case <-sigs:
 			fmt.Printf("Finishing at: %v\n", time.Now().Unix())
 			fmt.Printf("Spans created: %f\n", spansCreated)
-	        statsdClient.Incr("transport_sample.span_logged", nil, float64(spansCreated))
+	        statsdClient.Incr("transport_sample.span_logged", float64(spansCreated), 1)
 	        statsdClient.Incr("transport_sample.end", nil, 1)
 			statsdClient.Close()
 			os.Exit(0)
