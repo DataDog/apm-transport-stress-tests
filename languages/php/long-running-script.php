@@ -46,9 +46,9 @@ function root_function(DogStatsd $statsd)
     nested_function($statsd);
     $GLOBALS["spans_created"] = $GLOBALS["spans_created"] + 2;
     $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
-    if ($period_span_diff > 199) {
+    if ($period_span_diff > 1999) {
         echo "Incrementing span count by $period_span_diff \n";
-        $statsd->increment('transport_sample.spans_created', 1.0, null, $period_span_diff);
+        $statsd->increment('transport_sample.spans_created', 1.0, null, $value = $period_span_diff);
         $GLOBALS["total_live_increment"] = $GLOBALS["total_live_increment"] + $period_span_diff;
         $GLOBALS["spans_created_previous_track"] = $GLOBALS["spans_created"];
     }
@@ -58,6 +58,7 @@ function nested_function(DogStatsd $statsd)
 {
     // Sleep 1 ms
     \usleep(1000);
+    $statsd->increment('transport_sample.span_created');
 }
 
 \DDTrace\trace_function(
@@ -68,7 +69,7 @@ function nested_function(DogStatsd $statsd)
     }
 );
 
-\DDTrace\trace_function(
+\DDTrace\trace_function(    
     'App\nested_function',
     function ($span) {
         $span->name = 'span';
@@ -87,7 +88,7 @@ while ($GLOBALS["sigint_received"] != 1) {
 
 $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
 echo "Incrementing span count by $period_span_diff \n";
-$statsd->increment('transport_sample.span_created', 1.0, null, $period_span_diff);
+$statsd->increment('transport_sample.span_created', 1.0, null, $value = $period_span_diff);
 
 $GLOBALS["total_live_increment"] = $GLOBALS["total_live_increment"] + $period_span_diff;
 
@@ -97,7 +98,7 @@ echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
 $statsd->increment('transport_sample.end');
 echo "Incremented end metric\n";
-$statsd->increment('transport_sample.span_logged', 1.0, null, $spans_created);
+$statsd->increment('transport_sample.span_logged', 1.0, null, $value = $spans_created);
 echo "Incremented span count metric\n";
 
 echo "Waiting 5s for metrics to flush \n";
