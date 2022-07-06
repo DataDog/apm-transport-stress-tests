@@ -180,8 +180,8 @@ done
 
 echo ================================
 
-echo "Wait 15 seconds for shutdown handling and stats flushing"
-sleep 15
+echo "Wait 20 seconds for shutdown handling and stats flushing"
+sleep 20
 
 echo "Displaying containers"
 docker ps
