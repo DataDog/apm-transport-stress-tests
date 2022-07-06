@@ -33,22 +33,36 @@ func main() {
 	stressTest := &stressTest{statsdClient}
 
 	statsdClient.Incr("transport_sample.run", nil, 1)
-	spansCreated := 0
+	spansCreated := int64(0)
+	spanDiff := int64(0)
+	previousSpanSubmit := int64(0)
 
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, os.Interrupt)
 	for {
 		select {
 		case <-sigs:
+
+			// Submit last batch of live counting
+			spanDiff := spansCreated - previousSpanSubmit
+			statsdClient.Count("transport_sample.span_created", spanDiff, nil, 1)
+
 			fmt.Printf("Finishing at: %v\n", time.Now().Unix())
 			fmt.Printf("Spans created: %f\n", spansCreated)
-	        statsdClient.Incr("transport_sample.span_logged", nil, float64(spansCreated))
+	        statsdClient.Count("transport_sample.span_logged", spansCreated, nil, 1)
 	        statsdClient.Incr("transport_sample.end", nil, 1)
+			time.Sleep(5 * time.Second)
 			statsdClient.Close()
 			os.Exit(0)
 		default:
 			stressTest.createTrace()
 			spansCreated = spansCreated + 2
+			spanDiff = spansCreated - previousSpanSubmit
+
+			if spanDiff > 199 {
+				statsdClient.Count("transport_sample.span_created", spanDiff, nil, 1)
+				previousSpanSubmit = spansCreated
+			}
 		}
 	}
 }
@@ -62,11 +76,9 @@ type stressTest struct {
 // Each span creation sends an event to DogStatsD to
 // help with throughput analysis.
 func (st *stressTest) createTrace() {
-	st.statsdClient.Incr("transport_sample.span_created", nil, 1)
 	span := tracer.StartSpan("spam", tracer.ResourceName("spammer"))
 	defer span.Finish()
 
-	st.statsdClient.Incr("transport_sample.span_created", nil, 1)
 	childSpan := tracer.StartSpan("nested-spam", tracer.ChildOf(span.Context()))
 	time.Sleep(time.Millisecond)
 	childSpan.Finish()

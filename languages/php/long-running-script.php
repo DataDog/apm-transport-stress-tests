@@ -10,6 +10,8 @@ require __DIR__ . '/vendor/autoload.php';
 
 $sigint_received = 0;
 $spans_created = 0;
+$spans_created_previous_track = 0;
+$total_live_increment = 0;
 
 $statsd = new DogStatsd(
     array(
@@ -41,16 +43,22 @@ $statsd = new DogStatsd(
 
 function root_function(DogStatsd $statsd)
 {
-    $statsd->increment('transport_sample.span_created');
     nested_function($statsd);
     $GLOBALS["spans_created"] = $GLOBALS["spans_created"] + 2;
+    $period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
+    if ($period_span_diff > 1999) {
+        echo "Incrementing span count by $period_span_diff \n";
+        $statsd->increment('transport_sample.spans_created', 1.0, null, $value = $period_span_diff);
+        $GLOBALS["total_live_increment"] = $GLOBALS["total_live_increment"] + $period_span_diff;
+        $GLOBALS["spans_created_previous_track"] = $GLOBALS["spans_created"];
+    }
 }
 
 function nested_function(DogStatsd $statsd)
 {
-    $statsd->increment('transport_sample.span_created');
     // Sleep 1 ms
     \usleep(1000);
+    $statsd->increment('transport_sample.span_created');
 }
 
 \DDTrace\trace_function(
@@ -61,7 +69,7 @@ function nested_function(DogStatsd $statsd)
     }
 );
 
-\DDTrace\trace_function(
+\DDTrace\trace_function(    
     'App\nested_function',
     function ($span) {
         $span->name = 'span';
@@ -78,12 +86,24 @@ while ($GLOBALS["sigint_received"] != 1) {
     root_function($statsd);
 }
 
+$period_span_diff = $GLOBALS["spans_created"] - $GLOBALS["spans_created_previous_track"];
+echo "Incrementing span count by $period_span_diff \n";
+$statsd->increment('transport_sample.span_created', 1.0, null, $value = $period_span_diff);
+
+$GLOBALS["total_live_increment"] = $GLOBALS["total_live_increment"] + $period_span_diff;
+
+echo "Expected count in dashboard $total_live_increment \n";
+
 echo "Total span count $spans_created\n";
 echo "Exiting due to SIGINT\n";
 $statsd->increment('transport_sample.end');
 echo "Incremented end metric\n";
-$statsd->increment('transport_sample.span_logged', $value = $spans_created);
+$statsd->increment('transport_sample.span_logged', 1.0, null, $value = $spans_created);
 echo "Incremented span count metric\n";
+
+echo "Waiting 5s for metrics to flush \n";
+sleep(5);
+
 echo "Finished flushing metrics\n";
 
 exit(0);
