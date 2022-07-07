@@ -65,7 +65,7 @@ function loop () {
     spam(() => {
       metadata.span_count += 2;
       var diff = metadata.span_count - metadata.previous_submit_span_count;
-      if (diff > 199) {
+      if (diff > 499) {
         client.increment('transport_sample.span_created', diff);
         metadata.previous_submit_span_count = metadata.span_count;
       }
