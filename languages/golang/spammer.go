@@ -59,7 +59,7 @@ func main() {
 			spansCreated = spansCreated + 2
 			spanDiff = spansCreated - previousSpanSubmit
 
-			if spanDiff > 199 {
+			if spanDiff > 499 {
 				statsdClient.Count("transport_sample.span_created", spanDiff, nil, 1)
 				previousSpanSubmit = spansCreated
 			}

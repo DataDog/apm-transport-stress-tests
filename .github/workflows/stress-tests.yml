@@ -43,6 +43,28 @@ jobs:
 
           - library: dotnet
             agent: realagent
+            concurrent: 2
+          - library: nodejs
+            agent: realagent
+            concurrent: 2
+          - library: python
+            agent: realagent
+            concurrent: 2
+          - library: golang
+            agent: realagent
+            concurrent: 2
+          - library: ruby
+            agent: realagent
+            concurrent: 2
+          - library: java
+            agent: realagent
+            concurrent: 2
+          - library: php
+            agent: realagent
+            concurrent: 2
+
+          - library: dotnet
+            agent: realagent
             concurrent: 5
           - library: nodejs
             agent: realagent
@@ -65,25 +87,47 @@ jobs:
 
           - library: dotnet
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: nodejs
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: python
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: golang
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: ruby
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: java
             agent: realagent
-            concurrent: 20
+            concurrent: 10
           - library: php
             agent: realagent
-            concurrent: 20
+            concurrent: 10
+
+          - library: dotnet
+            agent: realagent
+            concurrent: 35
+          - library: nodejs
+            agent: realagent
+            concurrent: 30
+          - library: python
+            agent: realagent
+            concurrent: 30
+          - library: golang
+            agent: realagent
+            concurrent: 50
+          - library: ruby
+            agent: realagent
+            concurrent: 40
+          - library: java
+            agent: realagent
+            concurrent: 25
+          - library: php
+            agent: realagent
+            concurrent: 40
 
       fail-fast: false
     steps:

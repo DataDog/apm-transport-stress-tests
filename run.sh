@@ -25,8 +25,14 @@ if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
     export CONCURRENT_SPAMMERS=10
 fi
 
-TAG_LENGTH=1000
-TAG_COUNT=100
+if [[ "$TRACER" == "nodejs" ]]; then
+    echo "This language experiences exit code 137 with too much in the tags."
+    TAG_LENGTH=300
+    TAG_COUNT=50
+else
+    TAG_LENGTH=1000
+    TAG_COUNT=100
+fi
 
 GLOBAL_TAGS_FILLER=""
 TAG_VALUE=""
@@ -180,8 +186,8 @@ done
 
 echo ================================
 
-echo "Wait 15 seconds for shutdown handling and stats flushing"
-sleep 15
+echo "Wait 20 seconds for shutdown handling and stats flushing"
+sleep 20
 
 echo "Displaying containers"
 docker ps
