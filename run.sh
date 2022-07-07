@@ -28,7 +28,7 @@ fi
 if [[ "$TRACER" == "nodejs" ]]; then
     echo "This language has experiences exit code 137 with too much in the tags."
     TAG_LENGTH=300
-    TAG_COUNT=100
+    TAG_COUNT=50
 else
     TAG_LENGTH=1000
     TAG_COUNT=100
