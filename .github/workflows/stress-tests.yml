@@ -19,93 +19,93 @@ jobs:
           # - library: dotnet
           #   agent: mockagent
 
-          # - library: dotnet
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: nodejs
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: python
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: golang
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: ruby
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: java
-          #   agent: realagent
-          #   concurrent: 0
-          # - library: php
-          #   agent: realagent
-          #   concurrent: 0
-# 
-          # - library: dotnet
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: nodejs
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: python
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: golang
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: ruby
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: java
-          #   agent: realagent
-          #   concurrent: 2
-          # - library: php
-          #   agent: realagent
-          #   concurrent: 2
-# 
-          # - library: dotnet
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: nodejs
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: python
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: golang
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: ruby
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: java
-          #   agent: realagent
-          #   concurrent: 5
-          # - library: php
-          #   agent: realagent
-          #   concurrent: 5
-# 
-          # - library: dotnet
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: nodejs
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: python
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: golang
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: ruby
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: java
-          #   agent: realagent
-          #   concurrent: 10
-          # - library: php
-          #   agent: realagent
-          #   concurrent: 10
+          - library: dotnet
+            agent: realagent
+            concurrent: 0
+          - library: nodejs
+            agent: realagent
+            concurrent: 0
+          - library: python
+            agent: realagent
+            concurrent: 0
+          - library: golang
+            agent: realagent
+            concurrent: 0
+          - library: ruby
+            agent: realagent
+            concurrent: 0
+          - library: java
+            agent: realagent
+            concurrent: 0
+          - library: php
+            agent: realagent
+            concurrent: 0
+
+          - library: dotnet
+            agent: realagent
+            concurrent: 2
+          - library: nodejs
+            agent: realagent
+            concurrent: 2
+          - library: python
+            agent: realagent
+            concurrent: 2
+          - library: golang
+            agent: realagent
+            concurrent: 2
+          - library: ruby
+            agent: realagent
+            concurrent: 2
+          - library: java
+            agent: realagent
+            concurrent: 2
+          - library: php
+            agent: realagent
+            concurrent: 2
+
+          - library: dotnet
+            agent: realagent
+            concurrent: 5
+          - library: nodejs
+            agent: realagent
+            concurrent: 5
+          - library: python
+            agent: realagent
+            concurrent: 5
+          - library: golang
+            agent: realagent
+            concurrent: 5
+          - library: ruby
+            agent: realagent
+            concurrent: 5
+          - library: java
+            agent: realagent
+            concurrent: 5
+          - library: php
+            agent: realagent
+            concurrent: 5
+
+          - library: dotnet
+            agent: realagent
+            concurrent: 10
+          - library: nodejs
+            agent: realagent
+            concurrent: 10
+          - library: python
+            agent: realagent
+            concurrent: 10
+          - library: golang
+            agent: realagent
+            concurrent: 10
+          - library: ruby
+            agent: realagent
+            concurrent: 10
+          - library: java
+            agent: realagent
+            concurrent: 10
+          - library: php
+            agent: realagent
+            concurrent: 10
 
           - library: dotnet
             agent: realagent
@@ -124,7 +124,7 @@ jobs:
             concurrent: 40
           - library: java
             agent: realagent
-            concurrent: 30
+            concurrent: 25
           - library: php
             agent: realagent
             concurrent: 40
