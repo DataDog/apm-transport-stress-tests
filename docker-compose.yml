@@ -78,7 +78,7 @@ services:
       - "6126:6126"
       - "6125:6125/udp"
     # cpu_count: 1
-    cpus: 0.5
+    cpus: 0.4
     # cpu_percent: 10
     # mem_limit: 100m
 
