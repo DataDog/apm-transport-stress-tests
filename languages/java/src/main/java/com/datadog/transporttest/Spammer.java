@@ -38,6 +38,9 @@ public class Spammer {
                 .enableTelemetry(false)
                 .bufferPoolSize(512 * 4) // default 512
                 .errorHandler(e -> log.error("StatsDClient error: ", e))
+                .enableAggregation(true)
+                .aggregationFlushInterval(1000)
+                .aggregationShards(8)
                 .build();
 
         final DDTracer tracer = DDTracer.builder()
