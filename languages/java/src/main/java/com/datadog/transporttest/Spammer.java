@@ -36,6 +36,7 @@ public class Spammer {
                 // TODO: do we need StatsD client metrics?
                 // disable StatsD Client metrics
                 .enableTelemetry(false)
+                .bufferPoolSize(512 * 4) // default 512
                 .errorHandler(e -> log.error("StatsDClient error: ", e))
                 .build();
 
