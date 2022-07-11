@@ -30,17 +30,17 @@ public class Spammer {
         StatsDClient observer = new NonBlockingStatsDClientBuilder()
                 .hostname("observer")
                 .port(8125)
+                .constantTags(constantTags)
                 // make sure all the metrics are sent before shutdown
                 .blocking(true)
-                .constantTags(constantTags)
                 // TODO: do we need StatsD client metrics?
                 // disable StatsD Client metrics
                 .enableTelemetry(false)
-                .bufferPoolSize(512 * 4) // default 512
-                .errorHandler(e -> log.error("StatsDClient error: ", e))
                 .enableAggregation(true)
-                .aggregationFlushInterval(1000)
-                .aggregationShards(8)
+//                .bufferPoolSize(512 * 4) // default 512
+//                .aggregationFlushInterval(1000)
+//                .aggregationShards(8)
+                .errorHandler(e -> log.error("StatsDClient error: ", e))
                 .build();
 
         final DDTracer tracer = DDTracer.builder()
