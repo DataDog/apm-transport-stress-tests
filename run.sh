@@ -202,13 +202,13 @@ docker-compose down --remove-orphans
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 
-for unimplemented in java
-do
-    if [[ "$TRACER" == "$unimplemented" ]]; then
-        echo "This language has not yet implemented graceful SIGINT"
-        exit 0
-    fi
-done
+# for unimplemented in java
+# do
+#     if [[ "$TRACER" == "$unimplemented" ]]; then
+#         echo "This language has not yet implemented graceful SIGINT"
+#         exit 0
+#     fi
+# done
 
 # This language has implemented SIGINT
 exit $EXIT_CODE
