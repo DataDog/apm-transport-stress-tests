@@ -212,13 +212,5 @@ if [[ "$EXIT_CODE" == "0" ]]; then
     EXIT_CODE=$((LOG_EXIT_CODE))
 fi
 
-# for unimplemented in java
-# do
-#     if [[ "$TRACER" == "$unimplemented" ]]; then
-#         echo "This language has not yet implemented graceful SIGINT"
-#         exit 0
-#     fi
-# done
-
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 exit $EXIT_CODE
