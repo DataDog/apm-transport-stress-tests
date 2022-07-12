@@ -13,9 +13,10 @@ public class Spammer {
     private static Logger log = LoggerFactory.getLogger(Spammer.class);
 
     public static void main(String[] args) throws InterruptedException {
-        log.info("Sleeping for 10 seconds to wait for agent");
+        System.out.println("Sleeping for 10 seconds to wait for agent");
+        System.out.println("Timestamp: 1549");
         Thread.sleep(10000);
-        log.info("Starting spammer");
+        System.out.println("Starting spammer");
 
         String[] constantTags = new String[] {
                 "language:java",
@@ -29,6 +30,7 @@ public class Spammer {
 
         StatsDClient observer = new NonBlockingStatsDClientBuilder()
                 .hostname("observer")
+//                .hostname("localhost")
                 .port(8125)
                 .constantTags(constantTags)
                 // make sure all the metrics are sent before shutdown
@@ -71,11 +73,19 @@ public class Spammer {
                 observer.increment("transport_sample.span_logged", spansCreated);
                 observer.increment("transport_sample.end");
                 observer.close();
-                log.info("Ended spammer");
+                System.out.println("Ended spammer");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         observer.increment("transport_sample.run");
-        for (;;) {
+        for (int i=0;; i++) {
+            if (i % 100 == 0) {
+                System.out.println("Iter: " + i + " Free memory: " + Runtime.getRuntime().freeMemory() / 1_000_000 + "Mb");
+            }
             final Span span = tracer.buildSpan("spam").withResourceName("spammer").start();
             try (final Scope scope = tracer.activateSpan(span)) {
                 incrementSpans();
