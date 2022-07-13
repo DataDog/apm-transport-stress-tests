@@ -118,7 +118,7 @@ services:
       - mockagent
 
   concurrent-spammer:
-    image: transport-spammer
+    image: concurrent-spammer
     environment:
       - DD_AGENT_HOST
       - DD_TRACE_AGENT_PORT

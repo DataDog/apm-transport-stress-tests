@@ -26,3 +26,13 @@ docker build \
     -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
     ./languages/${LANGUAGE}
+	
+echo =============== Building Concurrent Spammer ===============
+
+CONCURRENT_DOCKERFILE=./languages/load/Dockerfile
+
+docker build \
+    --progress=plain \
+    -f ${CONCURRENT_DOCKERFILE} \
+    -t concurrent-spammer \
+    ./languages/load
