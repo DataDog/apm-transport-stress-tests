@@ -17,10 +17,12 @@ export EXTRA_SPAMMER_TAG="concurrent-spammer"
 
 for highoverhead in java nodejs
 do
+    echo "Checking for $highoverhead on $TRACER"
     if [[ "$TRACER" == "$highoverhead" ]]; then
         echo "Using the alternative load generator in the ./languages/load directory."
         export EXTRA_SPAMMER_TAG="not-for-load"
         export ALTERNATIVE_LOAD_NEEDED=true
+        break
     fi
 done
 
