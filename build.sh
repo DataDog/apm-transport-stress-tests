@@ -24,6 +24,8 @@ do
     fi
 done
 
+echo "Using indicator tag for sample: ${EXTRA_SPAMMER_TAG}"
+
 echo =============== Building Agent ===============
 
 AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
@@ -44,8 +46,6 @@ docker build \
 if [[ "$ALTERNATIVE_LOAD_NEEDED" == "true" ]]; then
 
     echo =============== Building Alternative Concurrent Spammer ===============
-
-    CONCURRENT_DOCKERFILE=
 
     docker build \
         --progress=plain \
