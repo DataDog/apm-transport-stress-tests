@@ -202,5 +202,17 @@ export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
+echo "Docker compose detected exit code $EXIT_CODE."
+
+if [[ "$EXIT_CODE" == "0" ]]; then
+    # We should check the spammer log file just in case docker missed the exit code
+    echo "Checking log file for exit code."
+    PATTERN="exited with code [0-9]{1,4}"
+    SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
+    LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
+    echo "Found exit code ${LOG_EXIT_CODE} in log file"
+    EXIT_CODE=$((LOG_EXIT_CODE))
+fi
+
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 exit $EXIT_CODE
