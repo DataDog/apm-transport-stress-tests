@@ -192,7 +192,6 @@ sleep 20
 echo "Displaying containers"
 docker ps
 
-# SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
 echo "Stopping all containers"

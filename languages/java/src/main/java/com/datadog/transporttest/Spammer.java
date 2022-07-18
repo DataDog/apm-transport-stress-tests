@@ -60,6 +60,7 @@ public class Spammer {
     private final StatsDClient observer;
     private final DDTracer tracer;
     private long spansCreated;
+    private long previousSpansCreated;
 
     private Spammer(StatsDClient observer, DDTracer tracer) {
         this.observer = observer;
@@ -88,20 +89,21 @@ public class Spammer {
             }
             final Span span = tracer.buildSpan("spam").withResourceName("spammer").start();
             try (final Scope scope = tracer.activateSpan(span)) {
-                incrementSpans();
+                spansCreated += 1;
                 final Span nestedSpan = tracer.buildSpan("nested-spam").asChildOf(span).start();
                 try (final Scope nestedScope = tracer.activateSpan(nestedSpan)) {
-                    incrementSpans();
+                    spansCreated += 1;
                     Thread.sleep(1);
                 }
                 nestedSpan.finish();
             }
             span.finish();
+            long diff = spansCreated - previousSpansCreated
+            if (diff >= 200) {
+                // Batch these so as to not overload dogstatsd
+                observer.increment("transport_sample.span_created", diff);
+                previousSpansCreated = spansCreated;
+            }
         }
-    }
-
-    private void incrementSpans() {
-        observer.increment("transport_sample.span_created");
-        spansCreated += 1;
     }
 }
