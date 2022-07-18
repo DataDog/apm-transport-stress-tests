@@ -192,7 +192,6 @@ sleep 20
 echo "Displaying containers"
 docker ps
 
-# SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
 echo "Stopping all containers"
@@ -201,14 +200,4 @@ export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
-
-# for unimplemented in java
-# do
-#     if [[ "$TRACER" == "$unimplemented" ]]; then
-#         echo "This language has not yet implemented graceful SIGINT"
-#         exit 0
-#     fi
-# done
-
-# This language has implemented SIGINT
 exit $EXIT_CODE
