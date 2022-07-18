@@ -83,7 +83,7 @@ public class Spammer {
             }
         });
         observer.increment("transport_sample.run");
-        for (int i=0;; i++) {
+        for (long i=0;; i++) {
             if (i % 100 == 0) {
                 System.out.println("Iter: " + i + " Free memory: " + Runtime.getRuntime().freeMemory() / 1_000_000 + "Mb");
             }
@@ -98,7 +98,7 @@ public class Spammer {
                 nestedSpan.finish();
             }
             span.finish();
-            long diff = spansCreated - previousSpansCreated
+            long diff = spansCreated - previousSpansCreated;
             if (diff >= 200) {
                 // Batch these so as to not overload dogstatsd
                 observer.increment("transport_sample.span_created", diff);
