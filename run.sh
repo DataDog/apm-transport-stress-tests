@@ -194,6 +194,9 @@ docker ps
 
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
+echo "Inspect Spammer container"
+docker-compose ps -q spammer | xargs docker inspect
+
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
