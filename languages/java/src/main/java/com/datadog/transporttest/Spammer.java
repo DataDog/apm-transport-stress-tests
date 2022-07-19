@@ -29,23 +29,17 @@ public class Spammer {
 
         StatsDClient observer = new NonBlockingStatsDClientBuilder()
                 .hostname("observer")
-//                .hostname("localhost")
                 .port(8125)
                 .constantTags(constantTags)
                 // make sure all the metrics are sent before shutdown
                 .blocking(true)
-                // TODO: do we need StatsD client metrics?
                 // disable StatsD Client metrics
                 .enableTelemetry(false)
                 .enableAggregation(true)
-//                .bufferPoolSize(512 * 4) // default 512
-//                .aggregationFlushInterval(1000)
-//                .aggregationShards(8)
                 .errorHandler(e -> log.error("StatsDClient error: ", e))
                 .build();
 
         final DDTracer tracer = DDTracer.builder()
-                // TODO: do we need java-tracer metrics?
                 // disables tracer metrics
                 .statsDClient(datadog.trace.api.StatsDClient.NO_OP)
                 .build();
@@ -70,11 +64,11 @@ public class Spammer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                log.info("Ending spammer...");
                 incrementSpanCreated(1);
                 observer.increment("transport_sample.span_logged", spansCreated);
                 observer.increment("transport_sample.end");
                 observer.close();
+                tracer.close();
                 log.info("Ended spammer");
             }
         });

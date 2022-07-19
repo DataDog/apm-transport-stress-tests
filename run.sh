@@ -204,7 +204,7 @@ docker-compose down --remove-orphans
 
 echo "Docker compose detected exit code $EXIT_CODE."
 
-if [[ "$EXIT_CODE" == "0" ]]; then
+if [[ "$EXIT_CODE" == "0" ]] || [[ "$EXIT_CODE" == "130" ]]; then
     # We should check the spammer log file just in case docker missed the exit code
     echo "Checking log file for exit code."
     PATTERN="exited with code [0-9]{1,4}"

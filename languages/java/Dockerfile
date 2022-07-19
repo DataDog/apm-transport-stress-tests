@@ -15,5 +15,4 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-# CMD ./stall.sh
 CMD ["java", "-Xmx362m", "-jar", "/app/target/Spammer-0.0.1-jar-with-dependencies.jar"]
