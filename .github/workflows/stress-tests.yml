@@ -109,7 +109,7 @@ jobs:
 
           - library: dotnet
             agent: realagent
-            concurrent: 35
+            concurrent: 30
           - library: nodejs
             agent: realagent
             concurrent: 50
@@ -121,10 +121,10 @@ jobs:
             concurrent: 50
           - library: ruby
             agent: realagent
-            concurrent: 40
+            concurrent: 35
           - library: java
             agent: realagent
-            concurrent: 30
+            concurrent: 25
           - library: php
             agent: realagent
             concurrent: 40
