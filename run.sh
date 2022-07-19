@@ -194,9 +194,6 @@ docker ps
 
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
-echo "Inspect Spammer container"
-docker-compose ps -q spammer | xargs docker inspect
-
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
@@ -204,7 +201,7 @@ docker-compose down --remove-orphans
 
 echo "Docker compose detected exit code $EXIT_CODE."
 
-if [[ "$EXIT_CODE" == "0" ]] || [[ "$EXIT_CODE" == "130" ]]; then
+if [[ "$EXIT_CODE" == "0" ]]; then
     # We should check the spammer log file just in case docker missed the exit code
     echo "Checking log file for exit code."
     PATTERN="exited with code [0-9]{1,4}"
@@ -212,6 +209,11 @@ if [[ "$EXIT_CODE" == "0" ]] || [[ "$EXIT_CODE" == "130" ]]; then
     LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
     echo "Found exit code ${LOG_EXIT_CODE} in log file"
     EXIT_CODE=$((LOG_EXIT_CODE))
+fi
+
+if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
+    echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
+    EXIT_CODE="0"
 fi
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
