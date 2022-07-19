@@ -176,7 +176,7 @@ containers=$(docker ps | awk '{if(NR>1) print $NF}')
 # loop through all containers
 for container in $containers
 do
-    if [[ $container == *"spammer"* ]] && [[ "$TRACER" != "java" ]]; then    
+    if [[ $container == *"spammer"* ]]; then    
         echo ================================    
         echo "Sending SIGINT to container: $container"
         # Signal for graceful exit if the sample supports it
@@ -194,9 +194,6 @@ docker ps
 
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
-echo "Inspect Spammer container"
-docker-compose ps -q spammer | xargs docker inspect
-
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
@@ -212,6 +209,11 @@ if [[ "$EXIT_CODE" == "0" ]]; then
     LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
     echo "Found exit code ${LOG_EXIT_CODE} in log file"
     EXIT_CODE=$((LOG_EXIT_CODE))
+fi
+
+if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
+    echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
+    EXIT_CODE="0"
 fi
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
