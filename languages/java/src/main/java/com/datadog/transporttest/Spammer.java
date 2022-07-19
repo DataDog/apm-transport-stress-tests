@@ -13,10 +13,9 @@ public class Spammer {
     private static Logger log = LoggerFactory.getLogger(Spammer.class);
 
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("Sleeping for 10 seconds to wait for agent");
-        System.out.println("Timestamp: 1549");
+        log.info("Sleeping for 10 seconds to wait for agent");
         Thread.sleep(10000);
-        System.out.println("Starting spammer");
+        log.info("Starting spammer");
 
         String[] constantTags = new String[] {
                 "language:java",
@@ -71,12 +70,12 @@ public class Spammer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                System.out.println("Ending spammer...");
-                observer.increment("transport_sample.span_created", spansCreated - previousSpansCreated);
+                log.info("Ending spammer...");
+                incrementSpanCreated(1);
                 observer.increment("transport_sample.span_logged", spansCreated);
                 observer.increment("transport_sample.end");
                 observer.close();
-                System.out.println("Ended spammer");
+                log.info("Ended spammer");
             }
         });
         observer.increment("transport_sample.run");
@@ -92,12 +91,16 @@ public class Spammer {
                 nestedSpan.finish();
             }
             span.finish();
-            long diff = spansCreated - previousSpansCreated;
-            if (diff >= 200) {
-                // Batch these so as to not overload dogstatsd
-                observer.increment("transport_sample.span_created", diff);
-                previousSpansCreated = spansCreated;
-            }
+            incrementSpanCreated(200);
+        }
+    }
+
+    private void incrementSpanCreated(int limit) {
+        long diff = spansCreated - previousSpansCreated;
+        if (diff >= limit) {
+            // Batch these so as to not overload dogstatsd
+            observer.increment("transport_sample.span_created", diff);
+            previousSpansCreated = spansCreated;
         }
     }
 }
