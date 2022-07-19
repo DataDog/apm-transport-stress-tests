@@ -180,7 +180,12 @@ do
         echo ================================    
         echo "Sending SIGINT to container: $container"
         # Signal for graceful exit if the sample supports it
-        docker kill --signal SIGINT $container
+        
+        { # try
+            docker kill --signal SIGINT $container
+        } || { # catch
+            echo "ERROR: Failed to send SIGINT to ${container}"
+        }
     fi
 done
 
@@ -192,7 +197,6 @@ sleep 20
 echo "Displaying containers"
 docker ps
 
-# SPAMMER_EXIT_CODE=$(docker ps -a | grep transport-spammer)
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
 echo "Stopping all containers"
@@ -212,13 +216,10 @@ if [[ "$EXIT_CODE" == "0" ]]; then
     EXIT_CODE=$((LOG_EXIT_CODE))
 fi
 
-for unimplemented in java
-do
-    if [[ "$TRACER" == "$unimplemented" ]]; then
-        echo "This language has not yet implemented graceful SIGINT"
-        exit 0
-    fi
-done
+if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
+    echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
+    EXIT_CODE="0"
+fi
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 exit $EXIT_CODE
