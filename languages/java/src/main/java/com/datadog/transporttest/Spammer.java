@@ -65,7 +65,7 @@ public class Spammer {
             @Override
             public void run() {
                 incrementSpanCreated(1);
-                observer.increment("transport_sample.span_logged", spansCreated);
+                observer.count("transport_sample.span_logged", spansCreated, 1.0);
                 observer.increment("transport_sample.end");
                 observer.close();
                 tracer.close();
@@ -93,7 +93,7 @@ public class Spammer {
         long diff = spansCreated - previousSpansCreated;
         if (diff >= limit) {
             // Batch these so as to not overload dogstatsd
-            observer.increment("transport_sample.span_created", diff);
+            observer.count("transport_sample.span_created", diff, 1.0);
             previousSpansCreated = spansCreated;
         }
     }
