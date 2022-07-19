@@ -180,7 +180,12 @@ do
         echo ================================    
         echo "Sending SIGINT to container: $container"
         # Signal for graceful exit if the sample supports it
-        docker kill --signal SIGINT $container
+        
+        { # try
+            docker kill --signal SIGINT $container
+        } || { # catch
+            echo "ERROR: Failed to send SIGINT to ${container}"
+        }
     fi
 done
 
