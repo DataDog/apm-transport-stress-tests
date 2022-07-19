@@ -15,7 +15,7 @@ AGENT_TYPE=${2}
 export ALTERNATIVE_LOAD_NEEDED=false
 export EXTRA_SPAMMER_TAG="concurrent-spammer"
 
-for highoverhead in java nodejs
+for highoverhead in nodejs
 do
     if [[ "$LANGUAGE" == "$highoverhead" ]]; then
         echo "Using the alternative load generator in the ./languages/load directory."
