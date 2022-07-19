@@ -176,7 +176,7 @@ containers=$(docker ps | awk '{if(NR>1) print $NF}')
 # loop through all containers
 for container in $containers
 do
-    if [[ $container == *"spammer"* ]] && [[ "$TRACER" != "java" ]]; then    
+    if [[ $container == *"spammer"* ]]; then    
         echo ================================    
         echo "Sending SIGINT to container: $container"
         # Signal for graceful exit if the sample supports it

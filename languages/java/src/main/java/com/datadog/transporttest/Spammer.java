@@ -71,22 +71,16 @@ public class Spammer {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                System.out.println("Ending spammer...");
+                observer.increment("transport_sample.span_created", spansCreated - previousSpansCreated);
                 observer.increment("transport_sample.span_logged", spansCreated);
                 observer.increment("transport_sample.end");
                 observer.close();
                 System.out.println("Ended spammer");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
             }
         });
         observer.increment("transport_sample.run");
-        for (long i=0;; i++) {
-            if (i % 100 == 0) {
-                System.out.println("Iter: " + i + " Free memory: " + Runtime.getRuntime().freeMemory() / 1_000_000 + "Mb");
-            }
+        while (true) {
             final Span span = tracer.buildSpan("spam").withResourceName("spammer").start();
             try (final Scope scope = tracer.activateSpan(span)) {
                 spansCreated += 1;
