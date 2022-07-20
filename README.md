@@ -35,17 +35,18 @@ The first goal is to not negatively affect the application on UDS compared to th
 The secondary goal is to understand potential span/data loss per language and transport.
 
 The worst result would be application crashing behavior. 
-We guard against this by watching for any non-graceful exits and failing the ./run.sh script if they are detected.
+We guard against this by watching for any non-graceful exits and failing the `./run.sh` script if they are detected.
 If there is a graceful exit, we can expect that the metrics reported are reliable.
 
 ### Spammers and the Agent
 
-Each language has a `spammer` application defined in the corresponding language folder (./languages).
+Each language has a `spammer` application defined in the corresponding language folder (`./languages`).
+
 The spammer application is ultimately a script that runs until SIGINT is received.
 Approximately every millisecond, a trace is created with that tracer's manual instrumentation API.
 The tracer is configured with the variables needed to enable either UDS or TCPIP depending on the ./run.sh parameters.
 
-There is a single `spammer` container which is measured/observed and the logs are saved to a shared volume.
+There is a single `spammer` container which is measured and the logs are saved to a shared volume.
 There are many `concurrent-spammer` containers which are responsible for generating load for that language against the Agent.
 
 Both the `spammer` and `concurrent-spammer` use the same image defined by the language's Dockerfile.
@@ -91,7 +92,7 @@ This requires that each language's `spammer` application submit metrics in a rel
 flowchart TD
     OBSERVER[Observer]
     SPAMMER -->|metrics| OBSERVER
-    CONCURRENTSPAMMER1 -->|metrics| OBSERVER
-    CONCURRENTSPAMMER2 -->|metrics| OBSERVER
-    CONCURRENTSPAMMERX -->|metrics| OBSERVER
+    CONCURRENTSPAMMER1[Concurrent Spammer 1]-->|metrics| OBSERVER
+    CONCURRENTSPAMMER2[Concurrent Spammer 2] -->|metrics| OBSERVER
+    CONCURRENTSPAMMERX[Concurrent Spammer ...] -->|metrics| OBSERVER
 ```
