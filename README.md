@@ -9,7 +9,6 @@ Refer to https://github.com/DataDog/apm-transport-stress-tests/blob/main/example
 There are options available to customize the runs:
  - export CONCURRENT_SPAMMERS=$number_of_extra_spammer_samples_to_run
  - export TRANSPORT_STRESS_TIMEOUT_MS=$approximate_milliseconds_to_run_samples_for
- - export TRANSPORT_STRESS_TIMEOUT_MS=$approximate_milliseconds_to_run_samples_for
 
 ```mermaid
 flowchart TD
