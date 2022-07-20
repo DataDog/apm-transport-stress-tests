@@ -204,6 +204,19 @@ export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
+AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
+echo "Attempting to detect buffer problems in agent logs."
+
+for evidence in "unexpected EOF" "Cannot decode v0.4 traces payload" "too few bytes left to read" "i/o timeout"
+do
+    { # try  
+        MATCHING_LINE_COUNT=$(cat "${AGENT_LOG}" | grep -c "${evidence}")
+        echo "EVIDENCE: Found ${MATCHING_LINE_COUNT} lines matching - ${evidence}"
+    } || { # catch
+        echo "Failed checking agent log for ${evidence}"
+     }
+done
+
 echo "Docker compose detected exit code $EXIT_CODE."
 
 if [[ "$EXIT_CODE" == "0" ]]; then
