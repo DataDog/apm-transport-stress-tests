@@ -28,7 +28,7 @@ flowchart TD
 
 To explain the architecture in a readable way, the charts are split into several focus areas.
 
-This is designed to emulate APM load against a shared agent in a k8s cluster, without the additional noise of web frameworks and automatic instrumentation.
+This tool is designed to emulate APM load against a shared agent in a k8s cluster, without the additional noise of web frameworks and automatic instrumentation.
 The purpose of this tool is to smoke test the overhead of the UDS transport against the TCPIP transport in highly concurrent scenarios.
 
 The first goal is to not negatively affect the application on UDS compared to the well taken path of TCPIP.
@@ -42,7 +42,7 @@ If there is a graceful exit, we can expect that the metrics reported are reliabl
 
 Each language has a `spammer` application defined in the corresponding language folder (`./languages`).
 
-The spammer application is ultimately a script that runs until SIGINT is received.
+The spammer application is ultimately a script that runs until `SIGINT` is received.
 Approximately every millisecond, a trace is created with that tracer's manual instrumentation API.
 The tracer is configured with the variables needed to enable either UDS or TCPIP depending on the ./run.sh parameters.
 
