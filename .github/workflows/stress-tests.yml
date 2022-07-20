@@ -109,10 +109,10 @@ jobs:
 
           - library: dotnet
             agent: realagent
-            concurrent: 25
+            concurrent: 30
           - library: nodejs
             agent: realagent
-            concurrent: 15
+            concurrent: 40
           - library: python
             agent: realagent
             concurrent: 25
@@ -121,13 +121,13 @@ jobs:
             concurrent: 40
           - library: ruby
             agent: realagent
-            concurrent: 25
+            concurrent: 28
           - library: java
             agent: realagent
-            concurrent: 20
+            concurrent: 23
           - library: php
             agent: realagent
-            concurrent: 25
+            concurrent: 32
 
       fail-fast: false
     steps:
