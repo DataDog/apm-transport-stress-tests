@@ -14,7 +14,7 @@ set -eu
 
 export AGENT_DOCKERFILE=realagent #realagent|mockagent|dotnetagent
 
-# Associates the two separate runs
+# Associates the two separate runs, can also be something like the pipeline run id in CI
 export RUN_ID=$(date +%s)
 
 # These variables have defaults, but you may choose to override the settings
