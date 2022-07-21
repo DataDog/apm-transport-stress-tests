@@ -204,16 +204,33 @@ export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
 
+AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
+echo "Attempting to detect buffer problems in agent logs."
+
+for evidence in "unexpected EOF" "Cannot decode v0.4 traces payload" "too few bytes left to read" "i/o timeout"
+do
+    { # try  
+        MATCHING_LINE_COUNT=$(cat "${AGENT_LOG}" | grep -c "${evidence}")
+        echo "EVIDENCE: Found ${MATCHING_LINE_COUNT} lines matching - ${evidence}"
+    } || { # catch
+        echo "Failed checking agent log for ${evidence}"
+    }
+done
+
 echo "Docker compose detected exit code $EXIT_CODE."
+SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
 
 if [[ "$EXIT_CODE" == "0" ]]; then
     # We should check the spammer log file just in case docker missed the exit code
     echo "Checking log file for exit code."
-    PATTERN="exited with code [0-9]{1,4}"
-    SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
-    LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
-    echo "Found exit code ${LOG_EXIT_CODE} in log file"
-    EXIT_CODE=$((LOG_EXIT_CODE))
+    { # try  
+        PATTERN="exited with code [0-9]{1,4}"
+        LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
+        echo "Found exit code ${LOG_EXIT_CODE} in log file"
+        EXIT_CODE=$((LOG_EXIT_CODE))
+    } || { # catch
+        echo "Failed checking spammer log for exit code"
+    }
 fi
 
 if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
