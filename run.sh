@@ -199,23 +199,30 @@ docker ps
 
 EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
-echo "Stopping all containers"
-export DOCKER_CLIENT_TIMEOUT=120
-export COMPOSE_HTTP_TIMEOUT=120
-docker-compose down --remove-orphans
+docker-compose down mockagent
 
 AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
 echo "Attempting to detect buffer problems in agent logs."
 
-for evidence in "unexpected EOF" "Cannot decode v0.4 traces payload" "too few bytes left to read" "i/o timeout"
-do
+export METRIC_TAGS="language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
+
+find_evidence () {
     { # try  
+        metric=$1
+        evidence=$2
         MATCHING_LINE_COUNT=$(cat "${AGENT_LOG}" | grep -c "${evidence}")
         echo "EVIDENCE: Found ${MATCHING_LINE_COUNT} lines matching - ${evidence}"
+        echo -n "transport_test.agent.${metric}:${MATCHING_LINE_COUNT}|c|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
     } || { # catch
         echo "Failed checking agent log for ${evidence}"
+        echo -n "transport_test.agent.${metric}.failure:1|c|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
     }
-done
+}
+
+find_evidence "cannot_decode_traces" "Cannot decode v0.4 traces payload"
+find_evidence "unexpected_eof" "unexpected EOF"
+find_evidence "too_few_bytes_left" "too few bytes left to read"
+find_evidence "io_timeout" "i/o timeout"
 
 echo "Docker compose detected exit code $EXIT_CODE."
 SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
@@ -232,6 +239,14 @@ if [[ "$EXIT_CODE" == "0" ]]; then
         echo "Failed checking spammer log for exit code"
     }
 fi
+
+echo "Sending exit code ${EXIT_CODE} as metric."
+echo -n "transport_test.sample.exit_code:${EXIT_CODE}|g|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
+
+echo "Stopping all containers"
+export DOCKER_CLIENT_TIMEOUT=120
+export COMPOSE_HTTP_TIMEOUT=120
+docker-compose down --remove-orphans
 
 if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
     echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
