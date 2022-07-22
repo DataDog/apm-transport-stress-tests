@@ -191,8 +191,8 @@ done
 
 echo ================================
 
-echo "Wait 20 seconds for shutdown handling and stats flushing"
-sleep 20
+echo "Wait 10 seconds for shutdown handling and stats flushing"
+sleep 10
 
 echo "Displaying containers"
 docker ps
@@ -204,18 +204,32 @@ docker-compose down mockagent
 AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
 echo "Attempting to detect buffer problems in agent logs."
 
-export METRIC_TAGS="language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
+export METRIC_TAGS="visual_aggregate:${TRACER}_${TRANSPORT}_c${CONCURRENT_SPAMMERS}_t${TRANSPORT_RUN_ID},language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
+
+send_metric_multiple_times_to_try_to_ensure_delivery() {
+    { # try  
+        metric_payload=$1
+        echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
+        sleep 0.25
+        echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
+        sleep 0.25
+        echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
+    } || { # catch
+        echo "Failed to send metric ${metric_payload}"
+        echo -n "transport_test.shell_metric.failure:1|c|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
+    }
+}
 
 find_evidence () {
     { # try  
-        metric=$1
-        evidence=$2
-        MATCHING_LINE_COUNT=$(cat "${AGENT_LOG}" | grep -c "${evidence}")
-        echo "EVIDENCE: Found ${MATCHING_LINE_COUNT} lines matching - ${evidence}"
-        echo -n "transport_test.agent.${metric}:${MATCHING_LINE_COUNT}|c|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
+        error_type=$1
+        text_to_match=$2
+        MATCHING_LINE_COUNT=$(cat "${AGENT_LOG}" | grep -c "${text_to_match}")
+        echo "EVIDENCE: Found ${MATCHING_LINE_COUNT} lines matching - ${text_to_match}"
+        send_metric_multiple_times_to_try_to_ensure_delivery "transport_test.agent.log_error:${MATCHING_LINE_COUNT}|g|#error_type:${error_type},${METRIC_TAGS}"
     } || { # catch
-        echo "Failed checking agent log for ${evidence}"
-        echo -n "transport_test.agent.${metric}.failure:1|c|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
+        echo "Failed checking agent log for ${text_to_match}"
+        echo -n "transport_test.agent.log_error.failure:1|c|#error_type:${error_type},${METRIC_TAGS}"|nc -4u -w1 localhost 8125
     }
 }
 
@@ -240,18 +254,21 @@ if [[ "$EXIT_CODE" == "0" ]]; then
     }
 fi
 
+if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
+    echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
+    EXIT_CODE="0"
+fi
+
 echo "Sending exit code ${EXIT_CODE} as metric."
-echo -n "transport_test.sample.exit_code:${EXIT_CODE}|g|1|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
+send_metric_multiple_times_to_try_to_ensure_delivery "transport_test.sample.exit_code:${EXIT_CODE}|g|#${METRIC_TAGS}"
+
+# Let the observer agent have some time to send metrics to the backend
+sleep 10
 
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 docker-compose down --remove-orphans
-
-if [[ "$TRACER" == "java" ]] && [[ "$EXIT_CODE" == "130" ]]; then
-    echo "Treat JVM 130 code returned on SIGINT as a success. Set process code to zero."
-    EXIT_CODE="0"
-fi
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 exit $EXIT_CODE
