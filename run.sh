@@ -266,7 +266,14 @@ sleep 10
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
-docker-compose down --remove-orphans
+
+{ # try  
+    docker-compose down --remove-orphans
+} || { # catch
+    echo "Failed running docker-compose down once, trying one more time."
+    sleep 3
+    docker-compose down --remove-orphans
+}
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
 exit $EXIT_CODE
