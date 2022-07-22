@@ -212,8 +212,6 @@ send_metric_multiple_times_to_try_to_ensure_delivery() {
         echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
         sleep 0.25
         echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
-        sleep 0.25
-        echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
     } || { # catch
         echo "Failed to send metric ${metric_payload}"
         echo -n "transport_test.shell_metric.failure:1|c|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
