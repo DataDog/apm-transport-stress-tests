@@ -191,7 +191,7 @@ done
 
 echo ================================
 
-echo "Wait 10 seconds for shutdown handling and stats flushing"
+echo "Wait for shutdown handling and stats flushing"
 sleep 10
 
 echo "Displaying containers"
@@ -207,12 +207,12 @@ echo "Attempting to detect buffer problems in agent logs."
 export METRIC_TAGS="visual_aggregate:${TRACER}_${TRANSPORT}_c${CONCURRENT_SPAMMERS}_t${TRANSPORT_RUN_ID},language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
 
 send_metric_multiple_times_to_try_to_ensure_delivery() {
-    for ((n=0;n<4;n++))
+    for ((n=0;n<5;n++))
     do
         { # try  
             metric_payload=$1
             echo -n "${metric_payload}"|nc -4u -w1 localhost 8125
-            sleep 0.3
+            sleep 0.4
         } || { # catch
             echo "Failed to send metric ${metric_payload}"
             echo -n "transport_test.shell_metric.failure:1|c|#${METRIC_TAGS}"|nc -4u -w1 localhost 8125
@@ -263,7 +263,7 @@ echo "Sending exit code ${EXIT_CODE} as metric."
 send_metric_multiple_times_to_try_to_ensure_delivery "transport_test.sample.exit_code:${EXIT_CODE}|g|#${METRIC_TAGS}"
 
 # Let the observer agent have some time to send metrics to the backend
-sleep 10
+sleep 15
 
 echo "Stopping all containers"
 export DOCKER_CLIENT_TIMEOUT=120
