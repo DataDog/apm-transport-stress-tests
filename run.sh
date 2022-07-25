@@ -204,7 +204,7 @@ docker-compose down mockagent
 AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
 echo "Attempting to detect buffer problems in agent logs."
 
-export METRIC_TAGS="visual_aggregate:${TRACER}_${TRANSPORT}_c${CONCURRENT_SPAMMERS}_t${TRANSPORT_RUN_ID},language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
+export METRIC_TAGS="visual_aggregate:${TRACER}_t${TRANSPORT_RUN_ID}_c${CONCURRENT_SPAMMERS}_${TRANSPORT},language:${TRACER},transport:${TRANSPORT},conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION}"
 
 send_metric_multiple_times_to_try_to_ensure_delivery() {
     for ((n=0;n<6;n++))
