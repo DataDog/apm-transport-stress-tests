@@ -124,7 +124,7 @@ jobs:
             concurrent: 32
           - library: java
             agent: realagent
-            concurrent: 40
+            concurrent: 21
           - library: php
             agent: realagent
             concurrent: 32
