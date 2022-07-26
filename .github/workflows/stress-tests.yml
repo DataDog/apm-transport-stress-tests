@@ -112,7 +112,7 @@ jobs:
             concurrent: 30
           - library: nodejs
             agent: realagent
-            concurrent: 40
+            concurrent: 20
           - library: python
             agent: realagent
             concurrent: 25
