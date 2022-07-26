@@ -25,7 +25,7 @@ if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
     export CONCURRENT_SPAMMERS=10
 fi
 
-if [[ "$TRACER" == "nodejs" ]]; then
+if [[ "$TRACER" == "none" ]]; then
     echo "This language experiences exit code 137 with too much in the tags."
     TAG_LENGTH=300
     TAG_COUNT=50
