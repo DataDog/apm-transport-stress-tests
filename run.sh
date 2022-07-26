@@ -6,6 +6,11 @@
 
 set -eu
 
+if [[ "$TRACER" != "nodejs" ]]; then
+    echo "Short circuit for faster tests."
+    exit 0
+fi
+
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 
@@ -183,11 +188,11 @@ do
         
         { # try
             docker kill --signal SIGINT $container
-            sleep 0.5
+            sleep 0.8
             docker kill --signal SIGINT $container
-            sleep 0.5
+            sleep 0.8
             docker kill --signal SIGINT $container
-            sleep 0.5
+            sleep 0.8
         } || { # catch
             echo "ERROR: Failed to send SIGINT to ${container}"
         }
