@@ -30,7 +30,7 @@ echo "Using indicator tag for sample: ${EXTRA_SPAMMER_TAG}"
 echo =============== Building Agent ===============
 
 AGENT_DOCKERFILE=./${AGENT_TYPE}.Dockerfile
-docker build --progress=plain -f ${AGENT_DOCKERFILE} -t transport-mockagent .
+docker build --progress=plain -f ${AGENT_DOCKERFILE} -t transport-mockagent . --no-cache
 	
 echo =============== Building Spammer ===============
 
@@ -41,7 +41,7 @@ docker build \
     -f ${SPAMMER_DOCKERFILE} \
     -t transport-spammer \
     -t ${EXTRA_SPAMMER_TAG} \
-    ./languages/${LANGUAGE}
+    ./languages/${LANGUAGE} --no-cache
 	
 
 if [[ "$ALTERNATIVE_LOAD_NEEDED" == "true" ]]; then
@@ -52,6 +52,6 @@ if [[ "$ALTERNATIVE_LOAD_NEEDED" == "true" ]]; then
         --progress=plain \
         -f ./languages/load/Dockerfile \
         -t concurrent-spammer \
-        ./languages/load
+        ./languages/load --no-cache
 
 fi
