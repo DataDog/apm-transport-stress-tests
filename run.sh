@@ -183,6 +183,11 @@ do
         
         { # try
             docker kill --signal SIGINT $container
+            sleep 0.5
+            docker kill --signal SIGINT $container
+            sleep 0.5
+            docker kill --signal SIGINT $container
+            sleep 0.5
         } || { # catch
             echo "ERROR: Failed to send SIGINT to ${container}"
         }
