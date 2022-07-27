@@ -6,11 +6,6 @@
 
 set -eu
 
-if [[ "$TRACER" != "nodejs" ]]; then
-    echo "Short circuit for faster tests."
-    exit 0
-fi
-
 # uds|tcpip
 export TRANSPORT=${1:-uds}
 
@@ -175,6 +170,8 @@ echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
+
+echo "Preparing to send SIGINT"
 
 containers=$(docker ps | awk '{if(NR>1) print $NF}')
 
