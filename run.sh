@@ -173,25 +173,48 @@ sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
 echo "Preparing to send SIGINT"
 
-containers=$(docker ps | awk '{if(NR>1) print $NF}')
 
-# loop through all containers
+for ((n=0;n<6;n++))
+do
+
+    containers=$(docker ps | awk '{if(NR>1) print $NF}')
+    sigint_sent=0
+    # loop through all containers
+    for container in $containers
+    do
+        if [[ $container == *"spammer"* ]]; then    
+            echo ================================    
+            echo "Sending SIGINT to container: $container"
+            # Signal for graceful exit if the sample supports it
+            
+            { # try
+                docker kill --signal SIGINT $container
+            } || { # catch
+                echo "ERROR: Failed to send SIGINT to ${container}"
+            }
+            sigint_sent=sigint_sent+1
+        fi
+    done
+
+    if [[ sigint_sent == 0 ]]; then
+        break
+    fi
+
+    # Make sure it worked by running one more time
+    sleep 2
+
+done
+
+containers=$(docker ps | awk '{if(NR>1) print $NF}')
 for container in $containers
 do
     if [[ $container == *"spammer"* ]]; then    
         echo ================================    
-        echo "Sending SIGINT to container: $container"
-        # Signal for graceful exit if the sample supports it
-        
+        echo "Failed to gracefully stop: $container"
         { # try
-            docker kill --signal SIGINT $container
-            sleep 0.8
-            docker kill --signal SIGINT $container
-            sleep 0.8
-            docker kill --signal SIGINT $container
-            sleep 0.8
+            docker kill $container
         } || { # catch
-            echo "ERROR: Failed to send SIGINT to ${container}"
+            echo "ERROR: Failed to kill ${container}"
         }
     fi
 done
