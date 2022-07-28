@@ -68,6 +68,7 @@ function loop () {
       if (diff > 499) {
         client.increment('transport_sample.span_created', diff);
         metadata.previous_submit_span_count = metadata.span_count;
+        log('Total spans: ' + metadata.span_count);
       }
       setImmediate(loop);
     });

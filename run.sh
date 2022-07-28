@@ -171,20 +171,50 @@ echo "Spammer container ID is ${SPAMMER_CONTAINER_ID}"
 echo Sleeping for $TRANSPORT_STRESS_TIMEOUT_MS milliseconds
 sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
-containers=$(docker ps | awk '{if(NR>1) print $NF}')
+echo "Preparing to send SIGINT"
 
-# loop through all containers
+for ((n=1;n<6;n++))
+do
+
+    containers=$(docker ps | awk '{if(NR>1) print $NF}')
+    sigint_sent=0
+    # loop through all containers
+    for container in $containers
+    do
+        if [[ $container == *"spammer"* ]]; then    
+            echo ================================    
+            echo "Attempt $n - Sending SIGINT to container: $container"
+            # Signal for graceful exit if the sample supports it
+            
+            { # try
+                docker kill --signal SIGINT $container
+            } || { # catch
+                echo "ERROR (This is probably good): Failed to send SIGINT to ${container}"
+            }
+            sigint_sent=sigint_sent+1
+        fi
+    done
+
+    if [[ sigint_sent == 0 ]]; then
+        echo "No containers needed SIGINT signal."
+        break
+    fi
+
+    # Make sure it worked by running at least one more time
+    sleep 5
+
+done
+
+containers=$(docker ps | awk '{if(NR>1) print $NF}')
 for container in $containers
 do
     if [[ $container == *"spammer"* ]]; then    
         echo ================================    
-        echo "Sending SIGINT to container: $container"
-        # Signal for graceful exit if the sample supports it
-        
+        echo "Failed to gracefully stop: $container"
         { # try
-            docker kill --signal SIGINT $container
+            docker kill $container
         } || { # catch
-            echo "ERROR: Failed to send SIGINT to ${container}"
+            echo "ERROR: Failed to kill ${container}"
         }
     fi
 done
@@ -192,7 +222,7 @@ done
 echo ================================
 
 echo "Wait for shutdown handling and stats flushing"
-sleep 10
+sleep 5
 
 echo "Displaying containers"
 docker ps
@@ -237,6 +267,7 @@ find_evidence "cannot_decode_traces" "Cannot decode v0.4 traces payload"
 find_evidence "unexpected_eof" "unexpected EOF"
 find_evidence "too_few_bytes_left" "too few bytes left to read"
 find_evidence "io_timeout" "i/o timeout"
+find_evidence "connection_reset" "connection reset"
 
 echo "Docker compose detected exit code $EXIT_CODE."
 SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
@@ -247,8 +278,15 @@ if [[ "$EXIT_CODE" == "0" ]]; then
     { # try  
         PATTERN="exited with code [0-9]{1,4}"
         LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
-        echo "Found exit code ${LOG_EXIT_CODE} in log file"
-        EXIT_CODE=$((LOG_EXIT_CODE))
+
+        if [[ "$LOG_EXIT_CODE" =~ [0-9]+ ]]; then
+            echo "Found exit code ${LOG_EXIT_CODE} in log file"
+            EXIT_CODE=$((LOG_EXIT_CODE))
+        else
+            echo "ERROR: Unable to parse exit code from log file, this probably means that shutdown was not successful"
+            EXIT_CODE=404 # Haha funny exit code
+        fi
+
     } || { # catch
         echo "Failed checking spammer log for exit code"
     }
