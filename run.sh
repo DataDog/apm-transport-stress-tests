@@ -173,7 +173,6 @@ sleep $((TRANSPORT_STRESS_TIMEOUT_MS/1000))
 
 echo "Preparing to send SIGINT"
 
-
 for ((n=1;n<6;n++))
 do
 
@@ -197,11 +196,12 @@ do
     done
 
     if [[ sigint_sent == 0 ]]; then
+        echo "No containers needed SIGINT signal."
         break
     fi
 
     # Make sure it worked by running at least one more time
-    sleep 2.5
+    sleep 5
 
 done
 
@@ -222,7 +222,7 @@ done
 echo ================================
 
 echo "Wait for shutdown handling and stats flushing"
-sleep 10
+sleep 5
 
 echo "Displaying containers"
 docker ps
@@ -267,6 +267,7 @@ find_evidence "cannot_decode_traces" "Cannot decode v0.4 traces payload"
 find_evidence "unexpected_eof" "unexpected EOF"
 find_evidence "too_few_bytes_left" "too few bytes left to read"
 find_evidence "io_timeout" "i/o timeout"
+find_evidence "connection_reset" "connection reset"
 
 echo "Docker compose detected exit code $EXIT_CODE."
 SPAMMER_LOG=${LOGS_FOLDER}/spammer-stdout.log
