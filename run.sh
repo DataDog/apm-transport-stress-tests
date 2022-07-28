@@ -278,12 +278,12 @@ if [[ "$EXIT_CODE" == "0" ]]; then
         PATTERN="exited with code [0-9]{1,4}"
         LOG_EXIT_CODE=$(cat "${SPAMMER_LOG}" | grep -E "${PATTERN}" | grep -Eo "[0-9]{1,4}")
 
-        if [[ $LOG_EXIT_CODE =~ '^[0-9]+$' ]] ; then
-            echo "ERROR: Exit code is totally missing from log file, this probably means that shutdown was not successful"
-            EXIT_CODE=404 # Haha funny exit code
-        else
+        if [[ "$LOG_EXIT_CODE" =~ [0-9]+ ]]; then
             echo "Found exit code ${LOG_EXIT_CODE} in log file"
             EXIT_CODE=$((LOG_EXIT_CODE))
+        else
+            echo "ERROR: Unable to parse exit code from log file, this probably means that shutdown was not successful"
+            EXIT_CODE=404 # Haha funny exit code
         fi
 
     } || { # catch
