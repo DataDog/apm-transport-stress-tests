@@ -121,7 +121,7 @@ jobs:
             concurrent: 40
           - library: ruby
             agent: realagent
-            concurrent: 32
+            concurrent: 38
           - library: java
             agent: realagent
             concurrent: 21
