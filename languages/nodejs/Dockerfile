@@ -7,8 +7,10 @@ RUN node --version && npm --version && curl --version
 
 WORKDIR /app
 
-COPY . ./
+COPY package.json package-lock.json ./
 
-RUN npm install dd-trace --save
+RUN npm install
+
+COPY index.js ./
 
 CMD ["node", "./index.js"]
