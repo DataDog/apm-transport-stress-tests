@@ -27,21 +27,24 @@ const client = new StatsD({
   errorHandler:  () => { /* ignore errors for now */ }
 });
 
-function nestedSpam (cb) {
-  return tracer.trace('nested-spam', {}, (_, done) => {
-    setTimeout(done, 1);
-    done();
-    cb();
-  });
+function nestedSpam (childOf, cb) {
+  const span = tracer.startSpan('nested-spam', { childOf })
+
+  span.finish()
+  cb()
 }
 
 function spam (cb) {
-  tracer.trace('spam', { resource: 'spammer' }, (_, done) => {
-    nestedSpam(() => {
-      done();
-      cb();
-    })
-  });
+  const span = tracer.startSpan('spam', {
+    tags: {
+      'resource.name': 'spammer'
+    }
+  })
+
+  nestedSpam(span, () => {
+    span.finish()
+    cb()
+  })
 }
 
 process.on('SIGINT', () => {
