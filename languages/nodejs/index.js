@@ -30,8 +30,10 @@ const client = new StatsD({
 function nestedSpam (childOf, cb) {
   const span = tracer.startSpan('nested-spam', { childOf })
 
-  span.finish()
-  cb()
+  setTimeout(() => {
+    span.finish()
+    cb()
+  }, 1)
 }
 
 function spam (cb) {
