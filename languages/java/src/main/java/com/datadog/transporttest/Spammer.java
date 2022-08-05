@@ -24,7 +24,8 @@ public class Spammer {
                 "trunid:" + System.getenv("TRANSPORT_RUN_ID"),
                 "env:" + System.getenv("DD_ENV"),
                 "service:" + System.getenv("DD_SERVICE"),
-                "version:" + System.getenv("DD_VERSION")
+                "version:" + System.getenv("DD_VERSION"),
+                "tracer_version:" + datadog.trace.core.DDTraceCoreInfo.VERSION
         };
 
         StatsDClient observer = new NonBlockingStatsDClientBuilder()

@@ -13,6 +13,9 @@ $spans_created = 0;
 $spans_created_previous_track = 0;
 $total_live_increment = 0;
 
+$tracer_version = \DDTrace\GlobalTracer::get()::VERSION;
+echo "Running tracer version $tracer_version\n";
+
 $statsd = new DogStatsd(
     array(
         'host' => 'observer',
@@ -25,6 +28,7 @@ $statsd = new DogStatsd(
             'conc' => \getenv('CONCURRENT_SPAMMERS'),
             'transport' => \getenv('TRANSPORT'),
             'trunid' => \getenv('TRANSPORT_RUN_ID'),
+            'tracer_version' => $tracer_version
         ],
     )
 );
