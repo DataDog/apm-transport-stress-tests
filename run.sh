@@ -106,6 +106,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
     export DD_SERVICE="${TRACER}"
     export DD_VERSION="uds"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+    export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 
     echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
 
@@ -119,6 +120,13 @@ else
     echo "Unknown protocol. Please use \"uds\" or \"tcpip\""
     exit 1
 fi
+
+if [[ "$TRACER" == "nodejs" ]]; then
+    echo "This language does not support metrics over UDS."
+    echo "To keep tests similar between TCP and UDS we disable runtime metrics entirely."
+    export DD_RUNTIME_METRICS_ENABLED=false
+fi
+
 
 # Clean logs/ folder
 rm -rf $OUTPUT_FOLDER

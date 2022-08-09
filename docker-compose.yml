@@ -64,6 +64,7 @@ services:
       - DD_VERSION
       - DD_APM_ENABLED=true
       - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
       - DD_HEALTH_PORT=5555
       - DD_HOSTNAME=mockagent${HOST_POSTFIX}
       - DD_PROCESS_AGENT_ENABLED=false
@@ -111,6 +112,7 @@ services:
       - CONCURRENT_SPAMMERS
       - TRANSPORT_RUN_ID
       - TRANSPORT
+      - DD_RUNTIME_METRICS_ENABLED
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
