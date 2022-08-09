@@ -121,6 +121,13 @@ else
     exit 1
 fi
 
+if [[ "$TRACER" == "nodejs" ]]; then
+    echo "This language does not support metrics over UDS."
+    echo "To keep tests similar between TCP and UDS we disable runtime metrics entirely."
+    export DD_RUNTIME_METRICS_ENABLED=false
+fi
+
+
 # Clean logs/ folder
 rm -rf $OUTPUT_FOLDER
 mkdir -p $OUTPUT_FOLDER

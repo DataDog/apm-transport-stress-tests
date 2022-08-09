@@ -112,7 +112,7 @@ services:
       - CONCURRENT_SPAMMERS
       - TRANSPORT_RUN_ID
       - TRANSPORT
-      - DD_RUNTIME_METRICS_ENABLED=true
+      - DD_RUNTIME_METRICS_ENABLED
     volumes:
       - ./results/${TRANSPORT}/logs/tracer:/var/log/datadog
       - ./tmp/uds-volume/:/var/run/datadog
