@@ -106,6 +106,7 @@ elif [[ "$TRANSPORT" == "uds" ]]; then
     export DD_SERVICE="${TRACER}"
     export DD_VERSION="uds"
     export DD_APM_RECEIVER_SOCKET=/var/run/datadog/apm.socket
+    export DD_DOGSTATSD_SOCKET=/var/run/datadog/dsd.socket
 
     echo Binding APM on ${DD_APM_RECEIVER_SOCKET}
 
