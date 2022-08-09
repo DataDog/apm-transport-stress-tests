@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"os"
 	"os/signal"
 	"time"
+	"runtime/debug"
 
 	"github.com/DataDog/datadog-go/statsd"
 	"gopkg.in/DataDog/dd-trace-go.v1/ddtrace/tracer"
@@ -17,6 +19,25 @@ func main() {
 	fmt.Printf("Starting spammer at: %v\n", time.Now().Unix())
 	tracer.Start()
 	defer tracer.Stop()
+	tracer_version := "unset"
+
+	bip, ok := debug.ReadBuildInfo()
+	if !ok {
+		println("no build info")
+		tracer_version = "unset"
+	} else {
+		println("main package path", bip.Path)
+		fmt.Printf("main mod: %+v\n", bip.Main)
+		for k, dep := range bip.Deps {
+			fmt.Printf("  dep %d: %+v\n", k, dep)
+			if strings.Contains(dep.Path, "dd-trace-go") {
+				tracer_version = dep.Version
+			}
+		}
+	}
+
+	fmt.Printf("Using tracer version: %s\n", tracer_version)
+
 	globalTags := []string{
 		"language:golang",
 		fmt.Sprintf("transport:%s", os.Getenv("TRANSPORT")),
@@ -25,6 +46,7 @@ func main() {
 		fmt.Sprintf("env:%s", os.Getenv("DD_ENV")),
 		fmt.Sprintf("service:%s", os.Getenv("DD_SERVICE")),
 		fmt.Sprintf("version:%s", os.Getenv("DD_VERSION")),
+		fmt.Sprintf("tracer_version:%s", tracer_version),
 	}
 	statsdClient, err := statsd.New("observer:8125", statsd.WithTags(globalTags))
 	if err != nil {
