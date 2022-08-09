@@ -11,6 +11,9 @@ var metadata = {
   previous_submit_span_count: 0
 };
 
+var tracer_version = require('dd-trace/package.json').version;
+log("Using tracer version " + tracer_version);
+
 const client = new StatsD({
   host: 'observer',
   port: 8125,
@@ -21,6 +24,7 @@ const client = new StatsD({
     trunid: process.env.TRANSPORT_RUN_ID,
     conc: process.env.CONCURRENT_SPAMMERS,
     transport: process.env.TRANSPORT,
+    tracer_version: tracer_version,
     language: "nodejs"
   },
   bufferFlushInterval: 20, // Default of 1 second piles up too much data

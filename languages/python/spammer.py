@@ -2,7 +2,9 @@ import os
 import time
 
 from datadog import initialize, statsd
-from ddtrace import config, tracer
+from ddtrace import config, tracer, __version__
+
+print("Using tracer version {}".format(__version__))
 
 initialize(
     statsd_host="observer",
@@ -15,9 +17,9 @@ initialize(
         "env:{}".format(os.environ["DD_ENV"]),
         "service:{}".format(os.environ["DD_SERVICE"]),
         "version:{}".format(os.environ["DD_VERSION"]),
+        "tracer_version:{}".format(__version__),
     ],
 )
-
 
 print("Starting spammer")
 spans_created = 0

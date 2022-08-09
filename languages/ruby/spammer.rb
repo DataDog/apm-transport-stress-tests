@@ -1,14 +1,19 @@
 require 'datadog/statsd'
 require 'ddtrace'
+require 'ddtrace/version'
+
 
 class Spammer
   attr_reader \
+    :tracer_version,
     :metrics,
     :results
 
   def initialize
     # Setup metrics
-    @metrics = Datadog::Statsd.new('observer', 8125, tags: ["transport:#{ENV['TRANSPORT']}","conc:#{ENV['CONCURRENT_SPAMMERS']}","trunid:#{ENV['TRANSPORT_RUN_ID']}","env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}","language:ruby"])
+    @tracer_version = DDTrace::VERSION::STRING
+    puts "[#{Time.now.utc}] Using tracer version #{tracer_version}\n"
+    @metrics = Datadog::Statsd.new('observer', 8125, tags: ["transport:#{ENV['TRANSPORT']}","conc:#{ENV['CONCURRENT_SPAMMERS']}","trunid:#{ENV['TRANSPORT_RUN_ID']}","env:#{ENV['DD_ENV']}","service:#{ENV['DD_SERVICE']}","version:#{ENV['DD_VERSION']}","language:ruby","tracer_version:#{tracer_version}"])
     @results = {}
   end
 

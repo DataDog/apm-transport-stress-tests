@@ -1,6 +1,10 @@
 
 using StatsdClient;
 
+var tracerAssembly = System.Reflection.Assembly.Load("Datadog.Trace");
+var tracerVersion = tracerAssembly.GetName().Version;
+Console.WriteLine($"Using tracer version {tracerVersion}");
+
 Console.WriteLine($"Waiting for ready at {DateTime.Now.Ticks}.");
 
 Thread.Sleep(10000);
@@ -19,6 +23,7 @@ var dogstatsdConfig = new StatsdConfig
         $"conc:{Environment.GetEnvironmentVariable("CONCURRENT_SPAMMERS")}",
         $"trunid:{Environment.GetEnvironmentVariable("TRANSPORT_RUN_ID")}",
         $"transport:{Environment.GetEnvironmentVariable("TRANSPORT")}",
+        $"tracer_version:{tracerVersion}"
     },
 };
 
