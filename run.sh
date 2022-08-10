@@ -31,7 +31,7 @@ if [[ "$TRACER" == "none" ]]; then
     TAG_COUNT=50
 else
     TAG_LENGTH=10
-    TAG_COUNT=10
+    TAG_COUNT=1
 fi
 
 GLOBAL_TAGS_FILLER=""
