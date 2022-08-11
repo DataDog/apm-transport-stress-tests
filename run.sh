@@ -46,7 +46,7 @@ echo "Using global tags filler [$TAG_COUNT] with a value length of ${TAG_LENGTH}
 
 for ((i=TAG_COUNT; i>=1; i--))
 do
-    GLOBAL_TAGS_FILLER+="tag${i}:${TAG_VALUE},"
+    GLOBAL_TAGS_FILLER+="tag${i}:${TAG_VALUE} "
 done
 
 GLOBAL_TAGS_FILLER=${GLOBAL_TAGS_FILLER%?}
@@ -132,7 +132,7 @@ docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
 export SHARED_TAGS="conc:${CONCURRENT_SPAMMERS} trunid:${TRANSPORT_RUN_ID} env:${DD_ENV} service:${DD_SERVICE} version:${DD_VERSION} language:${TRACER}"
-export DD_TAGS="${SHARED_TAGS},$GLOBAL_TAGS_FILLER"
+export DD_TAGS="${SHARED_TAGS} ${GLOBAL_TAGS_FILLER}"
 
 echo "Sending DD_TAGS $DD_TAGS"
 
