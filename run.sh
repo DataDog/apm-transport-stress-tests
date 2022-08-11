@@ -132,7 +132,7 @@ docker inspect transport-mockagent > $OUTPUT_FOLDER/image_mockagent.json
 
 export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_ID}"
 export SHARED_TAGS="conc:${CONCURRENT_SPAMMERS} trunid:${TRANSPORT_RUN_ID} env:${DD_ENV} service:${DD_SERVICE} version:${DD_VERSION} language:${TRACER}"
-export DD_TAGS="${SHARED_TAGS},$GLOBAL_TAGS_FILLER"
+export DD_TAGS="${SHARED_TAGS}"
 
 echo "Sending DD_TAGS $DD_TAGS"
 
