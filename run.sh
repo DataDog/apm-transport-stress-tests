@@ -30,7 +30,7 @@ if [[ "$TRACER" == "none" ]]; then
     TAG_LENGTH=300
     TAG_COUNT=50
 else
-    TAG_LENGTH=250
+    TAG_LENGTH=300
     TAG_COUNT=100
 fi
 
