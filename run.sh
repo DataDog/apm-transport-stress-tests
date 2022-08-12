@@ -30,7 +30,7 @@ if [[ "$TRACER" == "none" ]]; then
     TAG_LENGTH=300
     TAG_COUNT=50
 else
-    TAG_LENGTH=500
+    TAG_LENGTH=250
     TAG_COUNT=100
 fi
 
@@ -134,8 +134,8 @@ export TRANSPORT_STRESS_RUN_TAG="conc${CONCURRENT_SPAMMERS}_run${TRANSPORT_RUN_I
 export SHARED_TAGS="conc:${CONCURRENT_SPAMMERS},trunid:${TRANSPORT_RUN_ID},env:${DD_ENV},service:${DD_SERVICE},version:${DD_VERSION},language:${TRACER}"
 export DD_TAGS="${SHARED_TAGS},${GLOBAL_TAGS_FILLER}"
 
-# Languages that don't support space: dotnet, node, java, python, ruby, php
-for needs_space_delimiter in golang
+# Languages that don't support space: dotnet, node, java, python // , ruby, php
+for needs_space_delimiter in golang php ruby
 do
 	if [[ "$TRACER" == "$needs_space_delimiter" ]]; then
 		echo "This language doesn't apply comma delimited DD_TAGS"
