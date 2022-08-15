@@ -118,16 +118,16 @@ jobs:
             concurrent: 25
           - library: golang
             agent: realagent
-            concurrent: 40
+            concurrent: 30
           - library: ruby
             agent: realagent
-            concurrent: 32
+            concurrent: 30
           - library: java
             agent: realagent
             concurrent: 21
           - library: php
             agent: realagent
-            concurrent: 32
+            concurrent: 30
 
       fail-fast: false
     steps:
