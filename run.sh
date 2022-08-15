@@ -25,14 +25,8 @@ if [[ "${CONCURRENT_SPAMMERS}" == "DEFAULT" ]]; then
     export CONCURRENT_SPAMMERS=10
 fi
 
-if [[ "$TRACER" == "none" ]]; then
-    echo "This language experiences exit code 137 with too much in the tags."
-    TAG_LENGTH=300
-    TAG_COUNT=50
-else
-    TAG_LENGTH=300
-    TAG_COUNT=100
-fi
+TAG_LENGTH=300
+TAG_COUNT=100
 
 GLOBAL_TAGS_FILLER=""
 TAG_VALUE=""
