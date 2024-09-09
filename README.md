@@ -31,7 +31,7 @@ To explain the architecture in a readable way, the charts are split into several
 This tool is designed to emulate APM load against a shared agent in a k8s cluster, without the additional noise of web frameworks and automatic instrumentation.
 The purpose of this tool is to smoke test the overhead of the UDS transport against the TCPIP transport in highly concurrent scenarios.
 
-The first goal is to not negatively affect the application on UDS compared to the well taken path of TCPIP.
+The first goal is to not negatively affect the application with UDS compared to the well worn path of TCPIP.
 The secondary goal is to understand potential span/data loss per language and transport.
 
 The worst result would be application crashing behavior. 
