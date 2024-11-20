@@ -149,13 +149,13 @@ echo "Sending DD_TAGS $DD_TAGS"
 
 # We need to start the mockagent ahead of time for this language
 echo "Starting agent and observer before sample."
-docker-compose up -d mockagent
-docker-compose up -d observer
+docker compose up -d mockagent
+docker compose up -d observer
 echo "Waiting for setup."
 sleep 5
 
 echo "Starting containers in background with spammer concurrency ${CONCURRENT_SPAMMERS}"
-docker-compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}
+docker compose up -d --scale concurrent-spammer=${CONCURRENT_SPAMMERS}
 
 echo "Displaying containers"
 docker ps
@@ -168,7 +168,7 @@ for container in ${containers[@]}
 do
     container_log="${LOGS_FOLDER}/${container}-stdout.log"
     echo Inspecting container logs ${container}, saving to ${container_log}
-    docker-compose logs --no-color --no-log-prefix -f $container > $container_log &
+    docker compose logs --no-color --no-log-prefix -f $container > $container_log &
 done
 
 # docker inspect transport-spammer
@@ -235,9 +235,9 @@ sleep 5
 echo "Displaying containers"
 docker ps
 
-EXIT_CODE=$(docker-compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
+EXIT_CODE=$(docker compose ps -q spammer | xargs docker inspect -f '{{ .State.ExitCode }}')
 
-docker-compose down mockagent
+docker compose down mockagent
 
 AGENT_LOG=${LOGS_FOLDER}/mockagent-stdout.log
 echo "Attempting to detect buffer problems in agent logs."
@@ -316,11 +316,11 @@ export DOCKER_CLIENT_TIMEOUT=120
 export COMPOSE_HTTP_TIMEOUT=120
 
 { # try  
-    docker-compose down --remove-orphans
+    docker compose down --remove-orphans
 } || { # catch
-    echo "Failed running docker-compose down once, trying one more time."
+    echo "Failed running docker compose down once, trying one more time."
     sleep 3
-    docker-compose down --remove-orphans
+    docker compose down --remove-orphans
 }
 
 echo "Spammer exited with $EXIT_CODE, test will fail on non-zero."
