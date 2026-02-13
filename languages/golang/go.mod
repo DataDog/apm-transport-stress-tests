@@ -1,6 +1,6 @@
 module transport-test
 
-go 1.17
+go 1.25.7
 
 require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
