@@ -1,4 +1,4 @@
-FROM golang:1
+FROM golang:1.25.7
 RUN go version && curl --version
 WORKDIR /app
 
