@@ -2,6 +2,8 @@ module transport-test
 
 go 1.17
 
+toolchain go1.26.1
+
 require (
 	github.com/DataDog/datadog-go v4.8.2+incompatible
 	gopkg.in/DataDog/dd-trace-go.v1 v1.38.1
