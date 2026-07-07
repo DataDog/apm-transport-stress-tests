@@ -13,5 +13,11 @@
   "dependencies": {
     "dd-trace": "^2.12.2",
     "hot-shots": "^9.1.0"
+  },
+  "overrides": {
+    "dd-trace": {
+      "protobufjs": "^7.6.5",
+      "semver": "^5.7.2"
+    }
   }
 }
